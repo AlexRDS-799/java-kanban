@@ -4,7 +4,7 @@ import java.util.HashMap;
 public class TaskManager{
     HashMap<Integer, Task> Tasks = new HashMap<>();
     HashMap<Integer, Epic> Epics = new HashMap<>();
-    HashMap<Epic, Subtask> Subtasks = new HashMap<>(); //подзадачи только в эпике, поэтмоу ключом используем эпик задачу
+    HashMap<Epic, ArrayList<Subtask>> Subtasks = new HashMap<>(); //подзадачи только в эпике, поэтмоу ключом используем эпик задачу
 
     public TaskManager(){
 
@@ -12,7 +12,6 @@ public class TaskManager{
 
     public void addTask(Task task){
         Tasks.put(task.getTask().hashCode(), task);
-
     }
 
     public void addEpic(Epic epic){
@@ -20,36 +19,46 @@ public class TaskManager{
     }
 
     public void addSubtask(Epic epic, Subtask subtask){
-        Subtasks.put(epic, subtask);
+       ArrayList<Subtask> subtasks = new ArrayList<>();
+        if(Subtasks.containsKey(epic)) {
+            Subtasks.get(epic).add(subtask);
+        }
+        else {
+            System.out.println("else");
+            subtasks.add(subtask);
+            Subtasks.put(epic, subtasks);
+        }
     }
 
     public void TasksList(){
+        System.out.println("Список задач: ");
         for(Task task: Tasks.values()){
             System.out.println(task.getTask());
         }
     }
 
     public void EpicList(){
+        System.out.println("Список эпиков: ");
         for(Epic epic: Epics.values()){
             System.out.println(epic.getEpic());
         }
     }
 
     public void SubtaskList(){
-        for(Subtask subtask: Subtasks.values()){
-            System.out.println(subtask.getSubTask());
+        System.out.println("Список подзадач");
+        for (Epic epic: Subtasks.keySet()) {
+            System.out.println(epic.getEpic() + ": ");
+            for (ArrayList<Subtask> subtasks : Subtasks.values()) {
+                for (Subtask subtask : subtasks) {
+                    System.out.println("->" + subtask.getSubTask());
+                }
+            }
         }
     }
 
-    public String toString(){
-        ArrayList<String> tasks = new ArrayList<>();
-        for(Task task: Tasks.values()){
-            task.getTask();
-            tasks.add(task.getTask());
-        }
-
-        return "TaskManager \n" +
-              "Задачи Tasks:" + tasks;
-    }
+//    @Override
+//    public String toString(){
+//        return
+//    }
 
 }

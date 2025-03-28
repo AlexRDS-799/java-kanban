@@ -1,8 +1,7 @@
-public class Epic extends Task{
+public class Epic{
     private final String epic;
 
-    public Epic(String epic, String task){
-        super(task);
+    public Epic(String epic){
         this.epic = epic;
     }
 

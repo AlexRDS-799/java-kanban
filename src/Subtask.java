@@ -1,9 +1,9 @@
-public class Subtask extends Task {
+public class Subtask {
 
    private final String subtask;
 
-    public Subtask(String task,String subtask){
-        super(task);
+    public Subtask(String subtask){
+
         this.subtask = subtask;
     }
 
