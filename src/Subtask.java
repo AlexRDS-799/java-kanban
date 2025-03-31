@@ -3,11 +3,31 @@ import java.util.Objects;
 public class Subtask {
 
    private final String subtask;
-   //private final int identifier;
+   private Status status = Status.NEW;
 
     public Subtask(String subtask){
-
         this.subtask = subtask;
+    }
+
+    public void setStatus(Status newStatus){
+        switch (newStatus){
+            case NEW:
+                this.status = newStatus;
+                break;
+            case IN_PROGRESS:
+                this.status = newStatus;
+                break;
+            case DONE:
+                this.status = newStatus;
+                break;
+            default:
+                System.out.println("Invalid status");
+
+        }
+    }
+
+    public Status getStatus(){
+        return status;
     }
 
     public String getSubTask(){
@@ -25,7 +45,7 @@ public class Subtask {
 
     @Override
     public int hashCode(){
-        return Objects.hash(subtask);
+        return subtask.hashCode();
     }
 
 }

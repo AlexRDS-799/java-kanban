@@ -2,6 +2,7 @@ import java.util.Objects;
 
 public class Epic{
     private final String epic;
+    private Status status = Status.NEW;
 
     public Epic(String epic){
         this.epic = epic;
@@ -9,6 +10,28 @@ public class Epic{
 
     public String getEpic(){
         return epic;
+    }
+
+    public void setStatus(Status newStatus){
+
+        switch (newStatus){
+            case NEW:
+                this.status = newStatus;
+                break;
+            case IN_PROGRESS:
+                this.status = newStatus;
+                break;
+            case DONE:
+                this.status = newStatus;
+                break;
+            default:
+                System.out.println("Invalid status");
+
+        }
+    }
+
+    public Status getStatus(){
+        return status;
     }
 
     @Override
@@ -22,6 +45,6 @@ public class Epic{
 
     @Override
     public int hashCode(){
-        return Objects.hash(epic);
+        return epic.hashCode();
     }
 }

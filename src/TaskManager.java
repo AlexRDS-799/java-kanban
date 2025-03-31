@@ -22,36 +22,37 @@ public class TaskManager{
             Subtasks.get(identifier).add(subtask);
         }
         else {
-            System.out.println("else");
             subtasks.add(subtask);
             Subtasks.put(identifier, subtasks);
         }
     }
 
     //Вывести список задач
-    public void tasksList(){
-        System.out.println("Список задач: ");
+    public ArrayList<String> tasksList(){
+        ArrayList<String> taskList = new ArrayList<>();
         for(Task task: Tasks.values()){
-            System.out.println(task.getTask());
+            taskList.add(task.getTask());
         }
+        return taskList;
     }
 
-    public void epicList(){
-        System.out.println("Список эпиков: ");
+    public ArrayList<String> epicsList(){
+        ArrayList<String> epicList = new ArrayList<>();
         for(Epic epic: Epics.values()){
-            System.out.println(epic.getEpic());
+            epicList.add(epic.getEpic());
         }
+        return epicList;
     }
 
-    public void subtaskList(){
-        System.out.println("Список подзадач");
+    public ArrayList<String> subtaskList(){
+       ArrayList<String> subtasksList = new ArrayList<>();
         for (int identifier: Subtasks.keySet()) {
-            System.out.println(Epics.get(identifier).getEpic() + ": ");  //Выводится епик, потом его подзадачи.
             ArrayList<Subtask> subtasks = Subtasks.get(identifier);
             for (Subtask subtask : subtasks) {
-                    System.out.println("->" + subtask.getSubTask());
+                    subtasksList.add(subtask.getSubTask());
             }
         }
+        return subtasksList;
     }
 
     public ArrayList<String> subtasksInTheEpic(int identifierEpic){
@@ -135,8 +136,8 @@ public class TaskManager{
     }
 
     //Обновить задачу
-    public void updateTask(int identifier, Task newTask){
-        Tasks.put(identifier, newTask);
+    public void updateTask(int identifierOldTask, Task newTask){
+        Tasks.put(identifierOldTask, newTask);
     }
 
     public void updateEpic(int identifierOldEpic, Epic newEpic){
@@ -155,4 +156,27 @@ public class TaskManager{
         }
     }
 
+    //Статус задач
+    public Status taskStatus(Task task){
+        return task.getStatus();
+    }
+
+    public Status epicStatus(Epic epic){
+        ArrayList<Subtask> subtasks = Subtasks.get(epic.hashCode());
+        Status status = Status.NEW;
+        for (Subtask subtask: subtasks){
+            if(subtask.getStatus() == Status.IN_PROGRESS){
+                status = Status.IN_PROGRESS;
+                break;
+            }else if (subtask.getStatus() == Status.DONE){
+                status = Status.DONE;
+            }
+        }
+        epic.setStatus(status);
+        return epic.getStatus();
+    }
+
+    public Status subtaslStatus(Subtask subtask){
+        return subtask.getStatus();
+    }
 }
