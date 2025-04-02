@@ -48,7 +48,8 @@ public class TaskManager {
         return new ArrayList<>(this.subtasks.values());
     }
 
-    public ArrayList<Subtask> subtasksInEpicList(int epicId){
+    public ArrayList<Subtask> subtasksInEpicList(int epicId){ //Поменял логику сбора сабтасков в классе эпика. Стал добавлять объект
+        //сабтаск, а не его id. Заменил логику во всех причастных методах, код получился короче)
         return epics.get(epicId).getSubtasksInThisEpic();
     }
 
