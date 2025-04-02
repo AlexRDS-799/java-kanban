@@ -12,15 +12,19 @@ public class Task {
     public Task(String task, String description){
         this.task = task;
         this.description = description;
-        this.id = ++TaskManager.idTask;
         this.status = Status.NEW;
     }
 
     public String getTask(){
         return task;
     }
+
     public int getId(){
         return id;
+    }
+
+    public void setId(int id){
+        this.id = id;
     }
 
     public void setStatus(Status status){
@@ -30,16 +34,15 @@ public class Task {
         return status;
     }
 
-
     @Override
     public boolean equals(Object object) {
         if (object == null || getClass() != object.getClass()) return false;
         Task task1 = (Task) object;    //стоит ли добавлять статус в переопределение equals?
-        return id == task1.id && Objects.equals(task, task1.task) && Objects.equals(description, task1.description) && status == task1.status;
+        return id == task1.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(task, description, id, status);
+        return Objects.hash(id);
     }
 }
