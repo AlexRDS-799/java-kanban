@@ -37,12 +37,12 @@ public class Main {
         System.out.println(taskManager.epicsList());
         System.out.println(taskManager.subtasksList());
 
-        System.out.println(epic1.getSubtaskIds());
+        System.out.println("Сабтаски в эпик1"+epic1.getSubtasksInThisEpic());
         System.out.println(taskManager.subtasksInEpicList(epic1.getId()));
         System.out.println("Получение по идентефикатору");
-        System.out.println(taskManager.getTask(task1.getId()).getTask());
-        System.out.println(taskManager.getEpic(epic2.getId()).getTask());
-        System.out.println(taskManager.getSubtask(subtask3.getId()).getTask());
+        System.out.println(taskManager.getTask(task1.getId()).getName());
+        System.out.println(taskManager.getEpic(epic2.getId()).getName());
+        System.out.println(taskManager.getSubtask(subtask3.getId()).getName());
 
         System.out.println("Получение подзадач по эпику");
         System.out.println(taskManager.subtasksInEpicList(epic1.getId()));
@@ -65,7 +65,7 @@ public class Main {
         System.out.println("Epic status after clearAllSubtasks - " + epic1.getStatus());
         System.out.println("tasks id: "+ " 1->"+task1.getId()+" 2->"+ task2.getId() +" 3->"+ task3.getId() );
         System.out.println("epics id: "+" 1->"+epic1.getId() + " 2->"+epic2.getId());
-        System.out.println("epics id"+epic1.getSubtaskIds());
+       // System.out.println("epics id"+epic1.getSubtaskIds());
 
     }
 }

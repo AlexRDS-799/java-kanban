@@ -1,21 +1,20 @@
 package com.yandex.app.model;
-import com.yandex.app.service.TaskManager;
 import java.util.Objects;
 
 public class Task {
-    protected String task;
+    protected String name;
     protected String description;
     protected int id;
     protected Status status;
 
-    public Task(String task, String description){
-        this.task = task;
+    public Task(String name, String description){
+        this.name = name;
         this.description = description;
         this.status = Status.NEW;
     }
 
-    public String getTask(){
-        return task;
+    public String getName(){
+        return name;
     }
 
     public int getId(){
