@@ -39,34 +39,33 @@ public class Main {
 
         System.out.println(epic1.getSubtaskIds());
         System.out.println(taskManager.subtasksInEpicList(epic1.getId()));
-//        System.out.println("Получение по идентефикатору");
-//        System.out.println(taskManager.getTask(task1.getId()).getTask());
-//        System.out.println(taskManager.getEpic(epic2.getId()).getTask());
-//        System.out.println(taskManager.getSubtask(subtask3.getId()).getTask());
-//
-//        System.out.println("Получение подзадач по эпику");
-//        System.out.println(taskManager.subtasksInEpicList(epic1.getId()));
-//
-//        System.out.println("Получение статуса таска");
-//        task2.setStatus(Status.DONE);
-//        System.out.println("Task1 status - " + task1.getStatus());
-//        System.out.println("Task2 status - " + task2.getStatus());
-//        System.out.println(taskManager.tasksList());
-//
-//
-//        System.out.println("Получение статуса эпика");
-//        System.out.println("Epic status before - " + epic1.getStatus());
-//        subtask1.setStatus(Status.IN_PROGRESS);
-//        subtask2.setStatus(Status.DONE);
-//        taskManager.updateEpic(epic1);
-//        System.out.println("Epic status after setStatus - " + epic1.getStatus());
-//        taskManager.clearAllSubtasks();
-//
-//        System.out.println("Epic status after clearAllSubtasks - " + epic1.getStatus());
-//
-//        System.out.println("tasks id: "+ " 1->"+task1.getId()+" 2->"+ task2.getId() +" 3->"+ task3.getId() );
-//        System.out.println("epics id: "+" 1->"+epic1.getId() + " 2->"+epic2.getId());
-//        System.out.println("epics id"+epic1.getSubtaskIds());
+        System.out.println("Получение по идентефикатору");
+        System.out.println(taskManager.getTask(task1.getId()).getTask());
+        System.out.println(taskManager.getEpic(epic2.getId()).getTask());
+        System.out.println(taskManager.getSubtask(subtask3.getId()).getTask());
+
+        System.out.println("Получение подзадач по эпику");
+        System.out.println(taskManager.subtasksInEpicList(epic1.getId()));
+
+        System.out.println("Получение статуса таска");
+        task2.setStatus(Status.DONE);
+        System.out.println("Task1 status - " + task1.getStatus());
+        System.out.println("Task2 status - " + task2.getStatus());
+        System.out.println(taskManager.tasksList());
+
+
+        System.out.println("Получение статуса эпика");
+        System.out.println("Epic status before - " + epic1.getStatus());
+        subtask1.setStatus(Status.IN_PROGRESS);
+        subtask2.setStatus(Status.DONE);
+        taskManager.updateEpic(epic1);
+        System.out.println("Epic status after setStatus - " + epic1.getStatus());
+        taskManager.clearAllSubtasks();
+
+        System.out.println("Epic status after clearAllSubtasks - " + epic1.getStatus());
+        System.out.println("tasks id: "+ " 1->"+task1.getId()+" 2->"+ task2.getId() +" 3->"+ task3.getId() );
+        System.out.println("epics id: "+" 1->"+epic1.getId() + " 2->"+epic2.getId());
+        System.out.println("epics id"+epic1.getSubtaskIds());
 
     }
 }
