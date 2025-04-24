@@ -35,7 +35,7 @@ public class Task {
     @Override
     public boolean equals(Object object) {
         if (object == null || getClass() != object.getClass()) return false;
-        Task task1 = (Task) object;    //стоит ли добавлять статус в переопределение equals?
+        Task task1 = (Task) object;
         return id == task1.id;
     }
 
