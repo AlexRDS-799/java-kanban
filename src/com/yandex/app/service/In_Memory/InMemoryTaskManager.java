@@ -17,28 +17,31 @@ public class InMemoryTaskManager implements TaskManager {
     private static int idTask = 0;
 
     Managers managers = new Managers();
-    HistoryManager inMemoryHistoryManager = managers.getDefaultHistory();
+    HistoryManager historyManager = managers.getDefaultHistory();
 
     @Override
-    public void addNewTask(Task task){
+    public int addNewTask(Task task){
         final int id = ++idTask;
         task.setId(id);
         tasks.put(id, task);
+        return task.getId();
     }
 
     @Override
-    public void addNewEpic(Epic epic){
+    public int addNewEpic(Epic epic){
         final int id = ++idTask;
         epic.setId(id);
         epics.put(id, epic);
+        return epic.getId();
     }
 
     @Override
-    public void addNewSubtask(Subtask subtask){
+    public int addNewSubtask(Subtask subtask){
         final int id = ++idTask;
         subtask.setId(id);
         subtasks.put(id, subtask);
         epics.get(subtask.getEpicId()).getSubtasksInThisEpic().add(subtask);
+        return subtask.getId();
     }
 
     @Override
@@ -83,25 +86,25 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTask(int id){
-        inMemoryHistoryManager.add(tasks.get(id));
+        historyManager.add(tasks.get(id));
         return tasks.get(id);
     }
 
     @Override
     public Epic getEpic(int id){
-        inMemoryHistoryManager.add(epics.get(id));
+        historyManager.add(epics.get(id));
         return epics.get(id);
     }
 
     @Override
     public Subtask getSubtask(int id){
-       inMemoryHistoryManager.add(subtasks.get(id));
+       historyManager.add(subtasks.get(id));
         return subtasks.get(id);
     }
 
     @Override
     public ArrayList<Task> getHistory(){
-        return inMemoryHistoryManager.getHistory();
+        return historyManager.getHistory();
     }
 
     @Override
@@ -138,8 +141,8 @@ public class InMemoryTaskManager implements TaskManager {
         subtasks.remove(id);
     }
 
-    @Override
-    public void updateEpicStatus(int epicId){
+
+    private void updateEpicStatus(int epicId){
         ArrayList<Subtask> subtaskInThisEpic = epics.get(epicId).getSubtasksInThisEpic();
         if(subtaskInThisEpic.isEmpty()){
             epics.get(epicId).setStatus(Status.NEW);
@@ -163,4 +166,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+    public void resetIdTask(){
+        idTask = 0;
+    }
 }

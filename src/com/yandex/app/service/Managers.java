@@ -7,11 +7,15 @@ import com.yandex.app.service.Interfaces.TaskManager;
 
 public class Managers {
 
-    public TaskManager getDefault(){
-        return new InMemoryTaskManager();
+    public static TaskManager getDefault(){
+        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
+        inMemoryTaskManager.resetIdTask(); //в объекте InMemoryTaskManager переменна idTask является static. При создании
+                                            //объекта класса переменная не обнуляется и счетчик задач не скидывается. Без
+                                            // данного метода тесты не проходят.
+        return inMemoryTaskManager;
     }
 
-    public HistoryManager getDefaultHistory(){
+    public static HistoryManager getDefaultHistory(){
         return new InMemoryHistoryManager();
     }
 
