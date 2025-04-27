@@ -8,7 +8,9 @@ import com.yandex.app.service.Interfaces.TaskManager;
 public class Managers {
 
     public TaskManager getDefault(){
-        return new InMemoryTaskManager();
+        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
+        inMemoryTaskManager.resetIdTask();
+        return inMemoryTaskManager;
     }
 
     public HistoryManager getDefaultHistory(){

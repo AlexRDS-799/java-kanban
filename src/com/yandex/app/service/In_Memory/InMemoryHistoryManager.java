@@ -3,7 +3,6 @@ package com.yandex.app.service.In_Memory;
 import com.yandex.app.model.Task;
 import com.yandex.app.service.Interfaces.HistoryManager;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class InMemoryHistoryManager implements HistoryManager {
