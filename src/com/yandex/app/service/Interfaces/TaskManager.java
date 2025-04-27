@@ -1,4 +1,4 @@
-package com.yandex.app.service;
+package com.yandex.app.service.Interfaces;
 
 import com.yandex.app.model.Epic;
 import com.yandex.app.model.Subtask;
@@ -19,6 +19,8 @@ public interface TaskManager {
     ArrayList<Epic> epicsList();
 
     ArrayList<Subtask> subtasksList();
+
+    ArrayList<Task> getHistory();
 
     ArrayList<Subtask> subtasksInEpicList(int epicId);
 

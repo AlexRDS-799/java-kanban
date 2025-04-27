@@ -1,19 +1,21 @@
 package com.yandex.app;
 
 import com.yandex.app.model.Epic;
-import com.yandex.app.model.Status;
 import com.yandex.app.model.Subtask;
 import com.yandex.app.model.Task;
-import com.yandex.app.service.InMemoryTaskManager;
+import com.yandex.app.service.In_Memory.InMemoryHistoryManager;
+import com.yandex.app.service.In_Memory.InMemoryTaskManager;
+import com.yandex.app.service.Interfaces.HistoryManager;
+import com.yandex.app.service.Interfaces.TaskManager;
 import com.yandex.app.service.Managers;
-import com.yandex.app.service.TaskManager;
 
 public class Main {
     public static void main(String[] args) {
         //Привет) После разъяснения понял суть задачи и решил переписать весь код заного. Теперь почти всё понятно
         //но остается загадкой, какая реализация методов updateTask,Epic,Subtask?
+        Managers managers = new Managers();
+        TaskManager inMemoryTaskManager = managers.getDefault();
 
-        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
         Task task1 = new Task("Task1", "Descript1");
         Task task2 = new Task("Task2", "Descript2");
         Task task3 = new Task("Task3", "Descript3");
@@ -46,8 +48,8 @@ public class Main {
         inMemoryTaskManager.getSubtask(subtask3.getId());
         inMemoryTaskManager.getEpic(epic2.getId());
 
-
-
         System.out.println(inMemoryTaskManager.getHistory());
+
+
     }
 }

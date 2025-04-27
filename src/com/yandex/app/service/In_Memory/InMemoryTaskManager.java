@@ -1,8 +1,11 @@
-package com.yandex.app.service;
+package com.yandex.app.service.In_Memory;
 import com.yandex.app.model.Epic;
 import com.yandex.app.model.Status;
 import com.yandex.app.model.Subtask;
 import com.yandex.app.model.Task;
+import com.yandex.app.service.Interfaces.HistoryManager;
+import com.yandex.app.service.Interfaces.TaskManager;
+import com.yandex.app.service.Managers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,8 +14,10 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();
     private final HashMap<Integer, Epic> epics = new HashMap<>();
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    private static ArrayList<Task> history = new ArrayList<>();
     private static int idTask = 0;
+
+    Managers managers = new Managers();
+    HistoryManager inMemoryHistoryManager = managers.getDefaultHistory();
 
     @Override
     public void addNewTask(Task task){
@@ -78,37 +83,25 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTask(int id){
-        if(history.size() <10) {
-            history.add(tasks.get(id));
-        }else {
-            history.removeFirst();
-            history.add(tasks.get(id));
-        }
+        inMemoryHistoryManager.add(tasks.get(id));
         return tasks.get(id);
     }
 
     @Override
     public Epic getEpic(int id){
-        if(history.size() <10) {
-            history.add(epics.get(id));
-        }else {
-            history.removeFirst();
-            history.add(epics.get(id));
-        }
-
+        inMemoryHistoryManager.add(epics.get(id));
         return epics.get(id);
     }
 
     @Override
     public Subtask getSubtask(int id){
-        if(history.size() <10) {
-            history.add(subtasks.get(id));
-        }else {
-            history.removeFirst();
-            history.add(subtasks.get(id));
-        }
-
+       inMemoryHistoryManager.add(subtasks.get(id));
         return subtasks.get(id);
+    }
+
+    @Override
+    public ArrayList<Task> getHistory(){
+        return inMemoryHistoryManager.getHistory();
     }
 
     @Override
@@ -170,7 +163,4 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    public ArrayList<Task> getHistory(){
-        return history;
-    }
 }
