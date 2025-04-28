@@ -13,13 +13,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class InMemoryTaskManagerTest {
 
     //в этом же тесте проверена инициализация объектов через класс Managers. Создается дефолтный менеджер с обнуленным idTasks
-
-    Managers manager = new Managers();
     private static TaskManager taskManager;
 
     @BeforeEach
     void beforeEach() {
-        taskManager = manager.getDefault();
+        taskManager = Managers.getDefault();
     }
 
     @Test

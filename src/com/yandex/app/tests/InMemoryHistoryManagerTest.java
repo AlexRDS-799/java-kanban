@@ -10,14 +10,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryHistoryManagerTest {
-    static Managers manager = new Managers();
     static TaskManager taskManager;
     Task task1;
     Epic epic1;
 
     @BeforeEach
     void beforeEach(){
-        taskManager = manager.getDefault();
+        taskManager = Managers.getDefault();
         task1 = new Task("Name", "Description");
         taskManager.addNewTask(task1);
         epic1 = new Epic("Name", "Description");
