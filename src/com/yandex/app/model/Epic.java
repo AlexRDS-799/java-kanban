@@ -14,4 +14,8 @@ public class Epic extends Task{
 
     }
 
+    @Override
+    public String toString() {
+        return this.description;
+    }
 }

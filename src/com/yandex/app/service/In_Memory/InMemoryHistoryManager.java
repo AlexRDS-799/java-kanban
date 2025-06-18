@@ -4,26 +4,29 @@ import com.yandex.app.model.Task;
 import com.yandex.app.service.Interfaces.HistoryManager;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private static int MAX_HISTORY_SIZE = 10;
-    private ArrayList<Task> history = new ArrayList<>();
+
+    private LinkedHashSet<Task> history = new LinkedHashSet<>();
 
     @Override
-    public void add(Task task){
-        if(history.size() < MAX_HISTORY_SIZE) {
+    public void add(Task task) {
+        if (history.contains(task)){
+            history.remove(task);
             history.add(task);
-        }else {
-            history.removeFirst();
+        } else {
             history.add(task);
         }
     }
 
     @Override
-    public ArrayList<Task> getHistory(){
-        ArrayList<Task> clone = (ArrayList<Task>) history.clone();
+    public LinkedHashSet<Task> getHistory(){
+
+        LinkedHashSet<Task> clone = (LinkedHashSet<Task>) history.clone();
         return clone;
     }
+
 
 }

@@ -5,6 +5,7 @@ import com.yandex.app.model.Subtask;
 import com.yandex.app.model.Task;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 
 public interface TaskManager {
 
@@ -20,7 +21,7 @@ public interface TaskManager {
 
     ArrayList<Subtask> subtasksList();
 
-    ArrayList<Task> getHistory();
+    LinkedHashSet<Task> getHistory();
 
     ArrayList<Subtask> subtasksInEpicList(int epicId);
 
