@@ -30,9 +30,6 @@ public class Main {
         taskManager.addNewSubtask(subtask2);
         taskManager.addNewSubtask(subtask3);
 
-        System.out.println(taskManager.tasksList());
-        System.out.println(taskManager.epicsList());
-        System.out.println(taskManager.subtasksList());
 
         taskManager.getTask(task1.getId());
         taskManager.getTask(task2.getId());
@@ -42,10 +39,28 @@ public class Main {
         taskManager.getSubtask(subtask1.getId());
         taskManager.getSubtask(subtask2.getId());
         taskManager.getSubtask(subtask3.getId());
+        System.out.println("история: " + taskManager.getHistory());
 
-        System.out.println("история: "+taskManager.getHistory());
-        taskManager.getTask(task1.getId());
-        System.out.println("история после повторного вызова таск1: "+ taskManager.getHistory());
+        // ПРОВЕРЯЕМ ИСТОРИЮ ПОСЛЕ УДАЛЕНИЯ ОДНОГО ТАСКА, ЭПИКА, САБТАСКА
+//        taskManager.getTask(task1.getId());
+//        System.out.println("история после повторного вызова таск1: " + taskManager.getHistory());
+
+//        taskManager.deleteEpic(epic.getId());
+//        System.out.println("История после удаления эпика"+ taskManager.getHistory());
+
+        taskManager.deleteSubtask(subtask3.getId());
+        System.out.println("История после удаления сабтаск3 " + taskManager.getHistory());
+
+
+        // ПРОВЕРЯЕМ ИСТОРИЯ ПОСЛЕ УДАЛЕНИЯ ВСЕХ ТАСКОВ, САБТАСКОВ, ЭПИКОВ
+//        taskManager.clearAllTasks();
+//        System.out.println("История после удаления ВСЕХ тасков "+ taskManager.getHistory());
+//
+//        taskManager.clearAllSubtasks();
+//        System.out.println("История после удаления ВСЕХ сабтасков "+ taskManager.getHistory());
+//
+        taskManager.clearAllEpics();
+        System.out.println("История после удаления ВСЕХ эпиков " + taskManager.getHistory());
 
 
     }

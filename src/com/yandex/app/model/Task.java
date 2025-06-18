@@ -7,28 +7,29 @@ public class Task {
     protected int id;
     protected Status status;
 
-    public Task(String name, String description){
+    public Task(String name, String description) {
         this.name = name;
         this.description = description;
         this.status = Status.NEW;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
-    public int getId(){
+    public int getId() {
         return id;
     }
 
-    public void setId(int id){
+    public void setId(int id) {
         this.id = id;
     }
 
-    public void setStatus(Status status){
+    public void setStatus(Status status) {
         this.status = status;
     }
-    public Status getStatus(){
+
+    public Status getStatus() {
         return status;
     }
 

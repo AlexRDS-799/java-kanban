@@ -15,7 +15,7 @@ class InMemoryHistoryManagerTest {
     Epic epic1;
 
     @BeforeEach
-    void beforeEach(){
+    void beforeEach() {
         taskManager = Managers.getDefault();
         task1 = new Task("Name", "Description");
         taskManager.addNewTask(task1);
@@ -25,12 +25,12 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void historyEmpty(){
+    void historyEmpty() {
         assertEquals(0, taskManager.getHistory().size());
     }
 
     @Test
-    void historyThreeTasks(){
+    void historyThreeTasks() {
         taskManager.getEpic(epic1.getId());
         getTaskNumberTimes(task1, 2);
 
@@ -39,7 +39,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void historyElevenTasks(){
+    void historyElevenTasks() {
         taskManager.getEpic(epic1.getId());
         getTaskNumberTimes(task1, 10);
 
@@ -48,7 +48,7 @@ class InMemoryHistoryManagerTest {
         // элемента ожидаем первым элементов в истории - task1
     }
 
-    public void getTaskNumberTimes(Task task, int times){
+    public void getTaskNumberTimes(Task task, int times) {
         for (int i = 1; i <= times; i++) {
             taskManager.getTask(task.getId());
         }

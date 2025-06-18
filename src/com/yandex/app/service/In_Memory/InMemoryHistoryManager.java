@@ -13,7 +13,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        if (history.contains(task)){
+        if (history.contains(task)) {
             history.remove(task);
             history.add(task);
         } else {
@@ -22,7 +22,13 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public LinkedHashSet<Task> getHistory(){
+    public void remove(Task task) {
+        history.remove(task);
+    }
+
+
+    @Override
+    public LinkedHashSet<Task> getHistory() {
 
         LinkedHashSet<Task> clone = (LinkedHashSet<Task>) history.clone();
         return clone;
