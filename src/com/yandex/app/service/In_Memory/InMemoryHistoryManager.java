@@ -3,9 +3,9 @@ package com.yandex.app.service.In_Memory;
 import com.yandex.app.model.Task;
 import com.yandex.app.service.Interfaces.HistoryManager;
 
-import java.util.ArrayList;
+
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
+
 
 public class InMemoryHistoryManager implements HistoryManager {
 
