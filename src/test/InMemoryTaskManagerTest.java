@@ -1,4 +1,4 @@
-package com.yandex.app.tests;
+package test;
 
 import com.yandex.app.model.Epic;
 import com.yandex.app.model.Subtask;
