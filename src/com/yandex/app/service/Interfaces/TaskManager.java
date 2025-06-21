@@ -21,7 +21,7 @@ public interface TaskManager {
 
     ArrayList<Subtask> subtasksList();
 
-    LinkedHashSet<Task> getHistory();
+    ArrayList<Task> getHistory();
 
     ArrayList<Subtask> subtasksInEpicList(int epicId);
 
