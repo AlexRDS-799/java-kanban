@@ -3,27 +3,87 @@ package com.yandex.app.service.In_Memory;
 import com.yandex.app.model.Task;
 import com.yandex.app.service.Interfaces.HistoryManager;
 
+
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private static int MAX_HISTORY_SIZE = 10;
-    private ArrayList<Task> history = new ArrayList<>();
+
+    private Map<Integer, Node<Integer, Task>> history = new HashMap<>();
+    private Node<Integer, Task> head = null;
+    private Node<Integer, Task> tail = null;
+
 
     @Override
-    public void add(Task task){
-        if(history.size() < MAX_HISTORY_SIZE) {
-            history.add(task);
-        }else {
-            history.removeFirst();
-            history.add(task);
+    public void add(Task task) {
+        if (task == null) {
+            return;
+        }
+
+        if (history.containsKey(task.getId())) {
+            removeNode(history.remove(task.getId()));
+        }
+        Node<Integer, Task> newNode = linkLast(task);
+        history.put(newNode.key, newNode);
+    }
+
+    @Override
+    public void remove(Task task) {
+        Node<Integer, Task> node = history.remove(task.getId());
+        removeNode(node);
+
+    }
+
+    @Override
+    public ArrayList<Task> getHistory() {
+        ArrayList<Task> arrayHistory = new ArrayList<>();
+        getTasks(arrayHistory);
+        return arrayHistory;
+    }
+
+
+    public Node<Integer, Task> linkLast(Task task) {
+        Node<Integer, Task> newNode = new Node<>(task.getId(), task);
+
+        if (tail == null) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail.next = newNode;
+            newNode.prew = tail;
+            tail = newNode;
+        }
+
+        return newNode;
+    }
+
+    public void removeNode(Node<Integer, Task> node) {
+
+        if (node == null) {
+            return;
+        }
+
+        if (node.prew != null) {
+            node.prew.next = node.next;
+        } else {
+            head = node.next;
+        }
+
+        if (node.next != null) {
+            node.next.prew = node.prew;
+        } else {
+            tail = node.prew;
         }
     }
 
-    @Override
-    public ArrayList<Task> getHistory(){
-        ArrayList<Task> clone = (ArrayList<Task>) history.clone();
-        return clone;
-    }
+    public void getTasks(ArrayList<Task> arrayHistory) {
 
+        Node current = head;
+        while (current != null) {
+            arrayHistory.add((Task) current.task);
+            current = current.next;
+        }
+    }
 }

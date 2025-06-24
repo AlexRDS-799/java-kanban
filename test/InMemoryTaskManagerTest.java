@@ -1,5 +1,3 @@
-package com.yandex.app.tests;
-
 import com.yandex.app.model.Epic;
 import com.yandex.app.model.Subtask;
 import com.yandex.app.model.Task;
@@ -21,7 +19,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void addNewTask(){
+    void addNewTask() {
         Task task = new Task("Name", "Description");
         final int taskId = taskManager.addNewTask(task);
 
@@ -31,11 +29,11 @@ class InMemoryTaskManagerTest {
         assertEquals(task, taskTest);
         assertEquals(1, taskManager.tasksList().size());
         assertEquals(1, taskManager.getTask(taskId).getId());
-        assertEquals(task,taskManager.getTask(taskId));
+        assertEquals(task, taskManager.getTask(taskId));
     }
 
     @Test
-    void addNewEpic(){
+    void addNewEpic() {
         Epic epic = new Epic("Name", "Description");
 
         final int epicId = taskManager.addNewEpic(epic);
@@ -45,14 +43,14 @@ class InMemoryTaskManagerTest {
         assertEquals(epic, epicTest);
         assertEquals(1, taskManager.epicsList().size());
         assertEquals(1, taskManager.getEpic(epicId).getId());
-        assertEquals(epic,taskManager.getEpic(epicId));
+        assertEquals(epic, taskManager.getEpic(epicId));
 
         //taskManager.addNewSubtask(epic); эпик невозможно добавить в список сабтасков, т.к. метод принимает объект эпика
         // а эпик объект приравнять к сабтаску не возможно, т.к. разные параметры методов (создание сабтаска требует epicId
     }
 
     @Test
-    void addNewSubtask(){
+    void addNewSubtask() {
         Epic epic = new Epic("Name", "Description");
         taskManager.addNewEpic(epic);
         Subtask subtask = new Subtask("Name", "Description", epic.getId());
@@ -67,7 +65,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void addsDifferentTypesOfTasks(){
+    void addsDifferentTypesOfTasks() {
         Epic epic = new Epic("Name", "Description");
         taskManager.addNewEpic(epic);
         Task task = new Task("Name", "Description");
