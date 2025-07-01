@@ -1,17 +1,14 @@
 package com.yandex.app.model;
 
 public class Subtask extends Task {
-    protected int epicId;
+    //protected int epicId;
 
     public Subtask(String name, String description, int epicId) {
         super(name, description);
-        this.epicId = epicId;
+        super.epicId = epicId;
+        taskType = TaskType.SUBTASK;
     }
 
-    public int getEpicId() {
-        return epicId;
-
-    }
 
     @Override
     public String toString() {
