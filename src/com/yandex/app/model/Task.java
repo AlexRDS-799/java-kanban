@@ -1,4 +1,5 @@
 package com.yandex.app.model;
+
 import java.util.Objects;
 
 public class Task {
@@ -19,7 +20,7 @@ public class Task {
         return name;
     }
 
-    public String getDescription(){
+    public String getDescription() {
         return description;
     }
 
@@ -44,7 +45,7 @@ public class Task {
         return status;
     }
 
-    public TaskType getTaskType(){
+    public TaskType getTaskType() {
         return taskType;
     }
 
