@@ -1,5 +1,6 @@
 package com.yandex.app.service;
 
+import com.yandex.app.service.File_Backed.FileBackedTaskManager;
 import com.yandex.app.service.In_Memory.InMemoryHistoryManager;
 import com.yandex.app.service.In_Memory.InMemoryTaskManager;
 import com.yandex.app.service.Interfaces.HistoryManager;
@@ -17,6 +18,10 @@ public class Managers {
 
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
+    }
+
+    public static FileBackedTaskManager getFileBackedManager(String pathTask, String pathHistory){
+        return new FileBackedTaskManager(pathTask, pathHistory);
     }
 
 }

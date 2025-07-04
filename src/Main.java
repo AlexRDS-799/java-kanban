@@ -1,5 +1,11 @@
 
+import com.yandex.app.model.Status;
+import com.yandex.app.model.Task;
 import com.yandex.app.service.File_Backed.FileBackedTaskManager;
+import com.yandex.app.service.Interfaces.TaskManager;
+import com.yandex.app.service.Managers;
+
+import java.io.File;
 
 
 public class Main {
@@ -10,8 +16,7 @@ public class Main {
         String pathHistory = "C:\\Users\\Alexandr\\IdeaProjects\\java-kanban\\src\\com\\yandex\\app" +
                 "\\service\\File_Backed\\SavedManager\\SavedHistory.txt";
 
-
-        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(pathTasks, pathHistory);
+        TaskManager fileBackedTaskManager = Managers.getFileBackedManager(pathTasks, pathHistory);
 
 //
 //
@@ -39,6 +44,10 @@ public class Main {
         System.out.println("epics: " + fileBackedTaskManager.epicsList());
         System.out.println("subtasks: " + fileBackedTaskManager.subtasksList());
         System.out.println("history: " + fileBackedTaskManager.getHistory());
+
+        Task task = fileBackedTaskManager.getTask(2);
+        task.setStatus(Status.DONE);
+        fileBackedTaskManager.updateTask(task);
 
 
 //        taskManager1.getTask(task1.getId());

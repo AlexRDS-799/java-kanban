@@ -6,6 +6,7 @@ import com.yandex.app.service.Interfaces.TaskManager;
 import com.yandex.app.service.TaskManagerExceptions.ManagerSaveException;
 
 import java.io.*;
+import java.util.ArrayList;
 
 
 public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
@@ -49,66 +50,76 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
     }
 
+    public Task taskFromString(String line) {
+
+        String[] tasks = line.split(",");
+        final int id = Integer.parseInt(tasks[0]);
+        final TaskType type = TaskType.valueOf(tasks[1]);
+        final String name = tasks[2];
+        final Status status = Status.valueOf(tasks[3]);
+        final String description = tasks[4];
+        final int epicId;
+
+        if (type == TaskType.SUBTASK) {
+            epicId = Integer.parseInt(tasks[5]);
+            Subtask subtask = new Subtask(name, description, epicId);
+            subtask.setId(id);
+            subtask.setStatus(status);
+            return subtask;
+        } else if (type == TaskType.TASK) {
+            Task task = new Task(name, description);
+            task.setId(id);
+            task.setStatus(status);
+            return task;
+        } else {
+            Epic epic = new Epic(name, description);
+            epic.setId(id);
+            epic.setStatus(status);
+            // epic.getSubtasksInThisEpic(); метод индивидуальный для эпика. После ретурна как таск, данный метод не будет работать?
+            return epic;
+        }
+    }
+
+    public int addTaskAfterReading(Task task) {
+        if (task.getTaskType() == TaskType.TASK) {
+            tasks.put(task.getId(), task);
+            return task.getId();
+        } else if (task.getTaskType() == TaskType.EPIC) {
+            epics.put(task.getId(), (Epic) task);
+            return task.getId();
+        } else {
+            subtasks.put(task.getId(), (Subtask) task);
+            epics.get(task.getEpicId()).getSubtasksInThisEpic().add((Subtask) task); //Так же здесь, у сабтаска переданного
+            //как таск, нет строки epicId. Поэтому в Task пришлось так же создать инт переменную epicID.
+            return task.getId();
+        }
+    }
+
     public void loadFromFile(File fileTask, File fileHistory) {
 
         try (BufferedReader bufferTasks = new BufferedReader(new FileReader(fileTask));
              BufferedReader bufferHistory = new BufferedReader(new FileReader(fileHistory))) {
 
-            int savedTaskId = 0;
+            String firstLine = bufferTasks.readLine();
             while (bufferTasks.ready()) {
                 String line = bufferTasks.readLine();
-                String[] tasksInLine = line.split(",");
-
-                if (tasksInLine[1].equals(TaskType.TASK.toString())) {
-                    int id = Integer.parseInt(tasksInLine[0]);
-                    if (savedTaskId < id) {
-                        savedTaskId = id;
-                    }
-                    Task task = new Task(tasksInLine[2], tasksInLine[4]);
-                    task.setId(id);
-                    task.setStatus(Status.valueOf(tasksInLine[3]));
-                    tasks.put(id, task);
-                } else if (tasksInLine[1].equals(TaskType.EPIC.toString())) {
-                    int id = Integer.parseInt(tasksInLine[0]);
-                    if (savedTaskId < id) {
-                        savedTaskId = id;
-                    }
-                    Epic epic = new Epic(tasksInLine[2], tasksInLine[4]);
-                    epic.setId(id);
-                    epic.setStatus(Status.valueOf(tasksInLine[3]));
-                    epics.put(id, epic);
-                } else if (tasksInLine[1].equals(TaskType.SUBTASK.toString())) {
-                    int id = Integer.parseInt(tasksInLine[0]);
-                    if (savedTaskId < id) {
-                        savedTaskId = id;
-                    }
-                    int epicId = Integer.parseInt(tasksInLine[5]);
-                    Subtask subtask = new Subtask(tasksInLine[2], tasksInLine[4], epicId);
-                    subtask.setId(id);
-                    subtasks.put(id, subtask);
+                int taskId = addTaskAfterReading(taskFromString(line));
+                if (idTask < taskId) {
+                    idTask = taskId;
                 }
             }
-            idTask = savedTaskId;
 
+            String firstHistoryLine = bufferHistory.readLine();
             while (bufferHistory.ready()) {
                 String line = bufferHistory.readLine();
-                String[] tasksInLine = line.split(",");
-
-                if (tasksInLine[1].equals(TaskType.TASK.toString())) {
-                    historyManager.add(tasks.get(Integer.parseInt(tasksInLine[0])));
-                } else if (tasksInLine[1].equals(TaskType.EPIC.toString())) {
-                    historyManager.add(epics.get(Integer.parseInt(tasksInLine[0])));
-                } else if (tasksInLine[1].equals(TaskType.SUBTASK.toString())) {
-                    historyManager.add(subtasks.get(Integer.parseInt(tasksInLine[0])));
-                }
+                historyManager.add(taskFromString(line)); //historyManager.add все принимает Task объекты, и мапа работает
+                //с Тасками, так что нет смысла разделять их на эпики такски сабтаски?
             }
         } catch (FileNotFoundException e) {
             throw new ManagerSaveException("Файл по указанному пути не существует!");
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при обработки данных файла!");
         }
-
-
     }
 
     public String taskInString(Task task) {
@@ -178,19 +189,45 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
     @Override
     public Epic getEpic(int id) {
+        historyManager.add(epics.get(id));
         save();
-        return super.getEpic(id);
+        return epics.get(id);
     }
 
     @Override
     public Subtask getSubtask(int id) {
+        historyManager.add(subtasks.get(id));
         save();
-        return super.getSubtask(id);
+        return subtasks.get(id);
     }
 
     @Override
     public Task getTask(int id) {
+        historyManager.add(tasks.get(id));
         save();
-        return super.getTask(id);
+        return tasks.get(id);
+    }
+
+    @Override
+    public void updateTask(Task task) {
+        super.updateTask(task);
+        save();
+    }
+
+    @Override
+    public void updateEpic(Epic epic) {
+        super.updateEpic(epic);
+        save();
+    }
+
+    @Override
+    public void updateSubtask(Subtask subtask) {
+        super.updateSubtask(subtask);
+        save();
+    }
+
+    @Override
+    public ArrayList<Task> getHistory() {
+        return super.getHistory();
     }
 }
