@@ -1,42 +1,63 @@
-import com.yandex.app.model.Epic;
-import com.yandex.app.model.Subtask;
+
+import com.yandex.app.model.Status;
 import com.yandex.app.model.Task;
 import com.yandex.app.service.Interfaces.TaskManager;
 import com.yandex.app.service.Managers;
 
+
 public class Main {
     public static void main(String[] args) {
 
-        TaskManager taskManager = Managers.getDefault();
+        String pathTasks = "C:\\Users\\Alexandr\\IdeaProjects\\java-kanban\\src\\com\\yandex\\app" +
+                "\\service\\File_Backed\\SavedManager\\SavedTasks.txt";
+        String pathHistory = "C:\\Users\\Alexandr\\IdeaProjects\\java-kanban\\src\\com\\yandex\\app" +
+                "\\service\\File_Backed\\SavedManager\\SavedHistory.txt";
 
-        Task task1 = new Task("1", "first task");
-        Task task2 = new Task("2", "second task");
+        TaskManager fileBackedTaskManager = Managers.getFileBackedManager(pathTasks, pathHistory);
 
-        Epic epic = new Epic("1", "first epic");
+//
+//
+//        Task task1 = new Task("Task1", "first task");
+//        Task task2 = new Task("Task2", "second task");
+//
+//        Epic epic = new Epic("Epic1", "first epic");
+//
+//        taskManager1.addNewEpic(epic);
+//        taskManager1.addNewTask(task1);
+//        taskManager1.addNewTask(task2);
+//
+//        taskManager1.getTask(task1.getId());
+//        taskManager1.getEpic(epic.getId());
+//        taskManager1.getEpic(epic.getId());
+//        Subtask subtask1 = new Subtask("Subtask1", "first subtask", epic.getId());
+//        Subtask subtask2 = new Subtask("Subtask2", "second subtask", epic.getId());
+//        Subtask subtask3 = new Subtask("Subtask3", "third subtask", epic.getId());
+//
+//        taskManager1.addNewSubtask(subtask1);
+//        taskManager1.addNewSubtask(subtask2);
+//        taskManager1.addNewSubtask(subtask3);
 
-        taskManager.addNewEpic(epic);
-        taskManager.addNewTask(task1);
-        taskManager.addNewTask(task2);
+        System.out.println("tasks: " + fileBackedTaskManager.tasksList());
+        System.out.println("epics: " + fileBackedTaskManager.epicsList());
+        System.out.println("subtasks: " + fileBackedTaskManager.subtasksList());
+        System.out.println("history: " + fileBackedTaskManager.getHistory());
 
-        Subtask subtask1 = new Subtask("1", "first subtask", epic.getId());
-        Subtask subtask2 = new Subtask("2", "second subtask", epic.getId());
-        Subtask subtask3 = new Subtask("3", "third subtask", epic.getId());
+        Task task = fileBackedTaskManager.getTask(2);
+        task.setStatus(Status.DONE);
+        fileBackedTaskManager.updateTask(task);
 
-        taskManager.addNewSubtask(subtask1);
-        taskManager.addNewSubtask(subtask2);
-        taskManager.addNewSubtask(subtask3);
 
-        taskManager.getTask(task1.getId());
-        taskManager.getSubtask(subtask1.getId());
-        taskManager.getEpic(epic.getId());
+//        taskManager1.getTask(task1.getId());
+//        taskManager1.getSubtask(subtask1.getId());
+//        taskManager1.getEpic(epic.getId());
 
-        System.out.println("история: " + taskManager.getHistory());
+//        System.out.println("история: " + taskManager1.getHistory());
 
-        taskManager.getTask(task1.getId());
-        System.out.println("история с последним таском " + taskManager.getHistory());
-
-        taskManager.getEpic(epic.getId());
-        System.out.println("история с последним epic " + taskManager.getHistory());
+//        taskManager1.getTask(task1.getId());
+//        System.out.println("история с последним таском " + taskManager1.getHistory());
+//
+//        taskManager1.getEpic(epic.getId());
+//        System.out.println("история с последним epic " + taskManager1.getHistory());
         // ПРОВЕРЯЕМ ИСТОРИЮ ПОСЛЕ УДАЛЕНИЯ ОДНОГО ТАСКА, ЭПИКА, САБТАСКА
 //        taskManager.getTask(task1.getId());
 //        System.out.println("история после повторного вызова таск1: " + taskManager.getHistory());

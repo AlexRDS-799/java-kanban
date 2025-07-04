@@ -1,11 +1,14 @@
 package com.yandex.app.model;
+
 import java.util.Objects;
 
 public class Task {
     protected String name;
     protected String description;
     protected int id;
+    protected int epicId;
     protected Status status;
+    protected TaskType taskType = TaskType.TASK;
 
     public Task(String name, String description) {
         this.name = name;
@@ -15,6 +18,15 @@ public class Task {
 
     public String getName() {
         return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public int getEpicId() {
+        return epicId;
+
     }
 
     public int getId() {
@@ -31,6 +43,10 @@ public class Task {
 
     public Status getStatus() {
         return status;
+    }
+
+    public TaskType getTaskType() {
+        return taskType;
     }
 
     @Override
