@@ -1,11 +1,19 @@
 id,type,name,status,description,epic
-2,TASK,Task1,DONE,first task
+2,TASK,Task1,NEW,first task
 3,TASK,Task2,NEW,second task
-7,TASK,newTask,NEW,after Reading
-8,TASK,newTask,NEW,after Reading
-9,TASK,newTask,NEW,after Reading
-10,TASK,newTask,NEW,after Reading
+8,TASK,Task1,NEW,first task
+9,TASK,Task2,NEW,second task
+14,TASK,Task1,NEW,first task
+15,TASK,Task2,NEW,second task
 1,EPIC,Epic1,NEW,first epic
+7,EPIC,Epic1,NEW,first epic
+13,EPIC,Epic1,NEW,first epic
+16,SUBTASK,Subtask1,NEW,first subtask,13
+17,SUBTASK,Subtask2,NEW,second subtask,13
+18,SUBTASK,Subtask3,NEW,third subtask,13
 4,SUBTASK,Subtask1,NEW,first subtask,1
 5,SUBTASK,Subtask2,NEW,second subtask,1
 6,SUBTASK,Subtask3,NEW,third subtask,1
+10,SUBTASK,Subtask1,NEW,first subtask,7
+11,SUBTASK,Subtask2,NEW,second subtask,7
+12,SUBTASK,Subtask3,NEW,third subtask,7

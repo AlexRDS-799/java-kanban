@@ -37,10 +37,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 bufferTasks.write("\n" + taskInString(epic));
             }
             for (Subtask subtask : subtasksList()) {
-                bufferTasks.write("\n" + taskInString(subtask));
+                bufferTasks.write("\n" + taskInString(subtask) + "," + subtask.getEpicId());
             }
             for (Task task : getHistory()) {
-                bufferHistory.write("\n" + taskInString(task));
+                String taskString = taskInString(task);
+                if (task.getTaskType() == TaskType.SUBTASK) {
+                    Subtask sub = (Subtask) task;
+                    taskString = taskInString(task) + "," + sub.getEpicId();
+                }
+                bufferHistory.write("\n" + taskString);
             }
         } catch (FileNotFoundException fileNotFound) {
             throw new ManagerSaveException("Файла по указанному пути не существует!");
@@ -66,33 +71,37 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             subtask.setId(id);
             subtask.setStatus(status);
             return subtask;
-        } else if (type == TaskType.TASK) {
+        }
+
+        if (type == TaskType.TASK) {
             Task task = new Task(name, description);
             task.setId(id);
             task.setStatus(status);
             return task;
-        } else {
-            Epic epic = new Epic(name, description);
-            epic.setId(id);
-            epic.setStatus(status);
-            // epic.getSubtasksInThisEpic(); метод индивидуальный для эпика. После ретурна как таск, данный метод не будет работать?
-            return epic;
         }
+
+        Epic epic = new Epic(name, description);
+        epic.setId(id);
+        epic.setStatus(status);
+
+
+        return epic;
     }
 
     public int addTaskAfterReading(Task task) {
-        if (task.getTaskType() == TaskType.TASK) {
-            tasks.put(task.getId(), task);
-            return task.getId();
-        } else if (task.getTaskType() == TaskType.EPIC) {
-            epics.put(task.getId(), (Epic) task);
-            return task.getId();
-        } else {
-            subtasks.put(task.getId(), (Subtask) task);
-            epics.get(task.getEpicId()).getSubtasksInThisEpic().add((Subtask) task); //Так же здесь, у сабтаска переданного
-            //как таск, нет строки epicId. Поэтому в Task пришлось так же создать инт переменную epicID.
-            return task.getId();
+
+        switch (task.getTaskType()) {
+            case TASK:
+                tasks.put(task.getId(), task);
+                break;
+            case EPIC:
+                epics.put(task.getId(), (Epic) task);
+                break;
+            case SUBTASK:
+                subtasks.put(task.getId(), (Subtask) task);
+                break;
         }
+        return task.getId();
     }
 
     public void loadFromFile(File fileTask, File fileHistory) {
@@ -109,25 +118,26 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 }
             }
 
+            for (Subtask subtask : subtasks.values()) {
+                epics.get(subtask.getEpicId()).getSubtasksInThisEpic().add(subtask);
+            }
+
             String firstHistoryLine = bufferHistory.readLine();
             while (bufferHistory.ready()) {
                 String line = bufferHistory.readLine();
-                historyManager.add(taskFromString(line)); //historyManager.add все принимает Task объекты, и мапа работает
-                //с Тасками, так что нет смысла разделять их на эпики такски сабтаски?
+                historyManager.add(taskFromString(line));
             }
         } catch (FileNotFoundException e) {
             throw new ManagerSaveException("Файл по указанному пути не существует!");
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при обработки данных файла!");
         }
+
     }
 
     public String taskInString(Task task) {
-        String infoTask = task.getId() + "," + task.getTaskType().toString() + ","
+        return task.getId() + "," + task.getTaskType().toString() + ","
                 + task.getName() + "," + task.getStatus().toString() + "," + task.getDescription();
-        if (task.getTaskType().toString().equals("SUBTASK")) {
-            return infoTask + "," + task.getEpicId();
-        } else return infoTask;
     }
 
     @Override

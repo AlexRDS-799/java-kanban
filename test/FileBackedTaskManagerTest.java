@@ -40,11 +40,11 @@ public class FileBackedTaskManagerTest {
     void savedTasksInFile() {
         filedBackedTaskManager.addNewTask(task1);
         filedBackedTaskManager.addNewEpic(epic1);
-        Subtask subtask = new Subtask("Subtask1", "DescriptionSubtusk1", epic1.getId());
+        Subtask subtask = new Subtask("Subtask1", "DescriptionSubtask1", epic1.getId());
         filedBackedTaskManager.addNewSubtask(subtask);
         String task1Line = "1,TASK,Task1,NEW,DescriptionTask1";
         String epic1Line = "2,EPIC,Epic1,NEW,DescriptionEpic1";
-        String subtask1Line = "3,SUBTASK,Subtask1,NEW,DescriptionSubtusk1,2";
+        String subtask1Line = "3,SUBTASK,Subtask1,NEW,DescriptionSubtask1,2";
         try {
             BufferedReader bfr = new BufferedReader(new FileReader(taskFile));
             String firstLine = bfr.readLine();
@@ -76,17 +76,15 @@ public class FileBackedTaskManagerTest {
     void savedHistory() {
         filedBackedTaskManager.addNewTask(task1);
         filedBackedTaskManager.addNewEpic(epic1);
-        Subtask subtask = new Subtask("Subtask1", "DescriptionSubtusk1", epic1.getId());
+        Subtask subtask = new Subtask("Subtask1", "DescriptionSubtask1", epic1.getId());
         filedBackedTaskManager.addNewSubtask(subtask);
 
         filedBackedTaskManager.getTask(task1.getId());
         filedBackedTaskManager.getEpic(epic1.getId());
         filedBackedTaskManager.getSubtask(subtask.getId());
 
-        System.out.println(filedBackedTaskManager.getHistory());
         //Get методы работают, история менеджера должна состоять из 3-х элементов
         assertEquals(3, filedBackedTaskManager.getHistory().size());
-
 
         //Создадим новый менеджер с другими патчами и проверм что там история будет пустая
         try {
@@ -96,8 +94,9 @@ public class FileBackedTaskManagerTest {
             assertEquals(0, newFiledManager.getHistory().size());
             //Передаем в пустой менеджер значение менеджера с информацией из файлов, в которые сохранены данные
             //История должна передать данные и теперь хранить 3 элемента
-            newFiledManager = Managers.getFileBackedManager(taskFile.getPath(), historyFile.getPath());
-            assertEquals(3, newFiledManager.getHistory().size());
+            TaskManager newManagerWithOldHistory = Managers.getFileBackedManager(taskFile.getPath(), historyFile.getPath());
+            System.out.println(newManagerWithOldHistory.getHistory());
+            assertEquals(3, newManagerWithOldHistory.getHistory().size());
 
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при создании нового менеджера для проверки истории! ");

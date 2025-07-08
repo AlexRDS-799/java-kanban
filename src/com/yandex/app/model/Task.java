@@ -6,7 +6,6 @@ public class Task {
     protected String name;
     protected String description;
     protected int id;
-    protected int epicId;
     protected Status status;
     protected TaskType taskType = TaskType.TASK;
 
@@ -24,10 +23,6 @@ public class Task {
         return description;
     }
 
-    public int getEpicId() {
-        return epicId;
-
-    }
 
     public int getId() {
         return id;
