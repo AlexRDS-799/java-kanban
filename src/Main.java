@@ -41,6 +41,8 @@ public class Main {
         System.out.println("epics: " + fileBackedTaskManager.epicsList());
         System.out.println("subtasks: " + fileBackedTaskManager.subtasksList());
         System.out.println("history: " + fileBackedTaskManager.getHistory());
+
+        System.out.println("Hello world!");
 //        taskManager1.getTask(task1.getId());
 //        taskManager1.getSubtask(subtask1.getId());
 //        taskManager1.getEpic(epic.getId());
