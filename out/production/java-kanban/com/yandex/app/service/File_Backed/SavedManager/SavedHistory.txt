@@ -1,9 +1,2 @@
-id,type,name,status,description,epic
-2,TASK,Task1,NEW,first task
-1,EPIC,Epic1,NEW,first epic
-8,TASK,Task1,NEW,first task
-7,EPIC,Epic1,NEW,first epic
-14,TASK,Task1,NEW,first task
-13,EPIC,Epic1,NEW,first epic
-20,TASK,Task1,NEW,first task
-19,EPIC,Epic1,NEW,first epic
+id,type,name,status,description,startTime,duration,epic
+1,TASK,Task1,NEW,first task,2025-07-15 12:00:00,10

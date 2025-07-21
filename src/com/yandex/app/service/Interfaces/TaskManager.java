@@ -4,7 +4,9 @@ import com.yandex.app.model.Epic;
 import com.yandex.app.model.Subtask;
 import com.yandex.app.model.Task;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 public interface TaskManager {
 
@@ -48,5 +50,8 @@ public interface TaskManager {
 
     void deleteSubtask(int id);
 
+    TreeMap<LocalDateTime, Task> getPrioritizedTasks();
+
+    boolean isTasksOverlap(Task task);
 
 }

@@ -12,6 +12,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 
 public class FileBackedTaskManagerTest {
@@ -20,6 +24,7 @@ public class FileBackedTaskManagerTest {
     Epic epic1;
     File taskFile;
     File historyFile;
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @BeforeEach
     void beforeEach() {
@@ -32,6 +37,8 @@ public class FileBackedTaskManagerTest {
         }
 
         task1 = new Task("Task1", "DescriptionTask1");
+        task1.setStartTime(LocalDateTime.parse("2025-01-01 00:00:00", formatter));
+        task1.setDuration(Duration.ofMinutes(10));
         epic1 = new Epic("Epic1", "DescriptionEpic1");
 
     }
@@ -41,10 +48,13 @@ public class FileBackedTaskManagerTest {
         filedBackedTaskManager.addNewTask(task1);
         filedBackedTaskManager.addNewEpic(epic1);
         Subtask subtask = new Subtask("Subtask1", "DescriptionSubtask1", epic1.getId());
+        subtask.setStartTime(LocalDateTime.parse("2025-01-01 00:00:00", formatter));
+        subtask.setDuration(Duration.ofMinutes(30));
         filedBackedTaskManager.addNewSubtask(subtask);
-        String task1Line = "1,TASK,Task1,NEW,DescriptionTask1";
-        String epic1Line = "2,EPIC,Epic1,NEW,DescriptionEpic1";
-        String subtask1Line = "3,SUBTASK,Subtask1,NEW,DescriptionSubtask1,2";
+
+        String task1Line = "1,TASK,Task1,NEW,DescriptionTask1,2025-01-01 00:00:00,10";
+        String epic1Line = "2,EPIC,Epic1,NEW,DescriptionEpic1,2025-01-01 00:00:00,30";
+        String subtask1Line = "3,SUBTASK,Subtask1,NEW,DescriptionSubtask1,2025-01-01 00:00:00,30,2";
         try {
             BufferedReader bfr = new BufferedReader(new FileReader(taskFile));
             String firstLine = bfr.readLine();
@@ -53,7 +63,7 @@ public class FileBackedTaskManagerTest {
             String subtaskLine = bfr.readLine();
             //Проверяем что данные записанные в файл, записаны в верном формате и последовательности
             assertEquals(task1Line, taskLine);
-            assertEquals(epic1Line, epicLine);
+            assertEquals(epic1Line, epicLine); //Так проверяется что эпику записано время и duration от единственного сабтаска
             assertEquals(subtask1Line, subtaskLine);
 
             //Проверяем что прочитанные данные могут нам вернуть полноценный Task
@@ -77,6 +87,8 @@ public class FileBackedTaskManagerTest {
         filedBackedTaskManager.addNewTask(task1);
         filedBackedTaskManager.addNewEpic(epic1);
         Subtask subtask = new Subtask("Subtask1", "DescriptionSubtask1", epic1.getId());
+        subtask.setStartTime(LocalDateTime.parse("2025-01-01 00:00:00", formatter));
+        subtask.setDuration(Duration.ofMinutes(30));
         filedBackedTaskManager.addNewSubtask(subtask);
 
         filedBackedTaskManager.getTask(task1.getId());
@@ -86,7 +98,7 @@ public class FileBackedTaskManagerTest {
         //Get методы работают, история менеджера должна состоять из 3-х элементов
         assertEquals(3, filedBackedTaskManager.getHistory().size());
 
-        //Создадим новый менеджер с другими патчами и проверм что там история будет пустая
+        //Создадим новый менеджер с другими патчами и проверим что там история будет пустая
         try {
             File newTaskFile = File.createTempFile("SaveTask", ".txt");
             File newHistoryFile = File.createTempFile("SaveHistory", ".txt");

@@ -6,12 +6,17 @@ import com.yandex.app.service.Interfaces.TaskManager;
 import com.yandex.app.service.TaskManagerExceptions.ManagerSaveException;
 
 import java.io.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 
 public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
     private final String pathTasks;
     private final String pathHistory;
+    public DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 
     public FileBackedTaskManager(String pathFileTasks, String pathFileHistory) {
@@ -22,11 +27,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
 
     void save() {
 
-        try (BufferedWriter bufferTasks = new BufferedWriter(new FileWriter(pathTasks));
-             BufferedWriter bufferHistory = new BufferedWriter(new FileWriter(pathHistory))) {
+        try (BufferedWriter bufferTasks = new BufferedWriter(new FileWriter(pathTasks, false));
+             BufferedWriter bufferHistory = new BufferedWriter(new FileWriter(pathHistory, false))) {
 
-            bufferTasks.write("id,type,name,status,description,epic");
-            bufferHistory.write("id,type,name,status,description,epic");
+            bufferTasks.write("id,type,name,status,description,startTime,duration,epic");
+            bufferHistory.write("id,type,name,status,description,startTime,duration,epic");
             bufferTasks.flush();
             bufferHistory.flush();
 
@@ -63,13 +68,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         final String name = tasks[2];
         final Status status = Status.valueOf(tasks[3]);
         final String description = tasks[4];
+        final LocalDateTime startTime = LocalDateTime.parse(tasks[5], formatter);
+        final Duration duration = Duration.ofMinutes(Long.parseLong(tasks[6]));
         final int epicId;
 
         if (type == TaskType.SUBTASK) {
-            epicId = Integer.parseInt(tasks[5]);
+            epicId = Integer.parseInt(tasks[7]);
             Subtask subtask = new Subtask(name, description, epicId);
             subtask.setId(id);
             subtask.setStatus(status);
+            subtask.setStartTime(startTime);
+            subtask.setDuration(duration);
             return subtask;
         }
 
@@ -77,12 +86,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             Task task = new Task(name, description);
             task.setId(id);
             task.setStatus(status);
+            task.setStartTime(startTime);
+            task.setDuration(duration);
             return task;
         }
 
         Epic epic = new Epic(name, description);
         epic.setId(id);
         epic.setStatus(status);
+        epic.setStartTime(startTime);
+        epic.setDuration(duration);
 
 
         return epic;
@@ -136,9 +149,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     }
 
     public String taskInString(Task task) {
+        long duration = task.getDuration().toMinutes();
+        String startTime = task.getStartTime().format(formatter);
         return task.getId() + "," + task.getTaskType().toString() + ","
-                + task.getName() + "," + task.getStatus().toString() + "," + task.getDescription();
+                + task.getName() + "," + task.getStatus().toString() + "," + task.getDescription() + "," + startTime + "," + duration;
     }
+
 
     @Override
     public int addNewEpic(Epic epic) {
@@ -152,6 +168,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         int subtaskId = super.addNewSubtask(subtask);
         save();
         return subtaskId;
+    }
+
+    @Override
+    public TreeMap<LocalDateTime, Task> getPrioritizedTasks() {
+        return super.getPrioritizedTasks();
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.yandex.app.model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -8,12 +10,41 @@ public class Task {
     protected int id;
     protected Status status;
     protected TaskType taskType = TaskType.TASK;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
         this.status = Status.NEW;
     }
+
+    public LocalDateTime getEndTime() {
+        try {
+            return this.startTime.plus(this.duration);
+        } catch (Exception e) {
+            System.out.println("В задаче не задано стартовое время или время на её выполнение");
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getStartTime() {
+        return this.startTime;
+    }
+
 
     public String getName() {
         return name;

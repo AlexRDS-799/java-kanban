@@ -7,9 +7,13 @@ import com.yandex.app.model.Task;
 import com.yandex.app.service.Interfaces.HistoryManager;
 import com.yandex.app.service.Interfaces.TaskManager;
 import com.yandex.app.service.Managers;
+import com.yandex.app.service.TaskManagerExceptions.ManagerSaveException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 
 public class InMemoryTaskManager implements TaskManager {
@@ -22,28 +26,94 @@ public class InMemoryTaskManager implements TaskManager {
     protected HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
+    public TreeMap<LocalDateTime, Task> getPrioritizedTasks() {
+
+        return Stream.of(tasks, subtasks)
+                .flatMap(map -> map.entrySet().stream())
+                .filter(entry -> entry.getValue().getStartTime() != null)
+                .collect(Collectors.toMap(
+                        entry -> entry.getValue().getStartTime(),
+                        Map.Entry::getValue,
+                        (startTime1, startTime2) -> startTime2,
+                        TreeMap::new
+                ));
+    }
+
+    @Override
+    public boolean isTasksOverlap(Task task) {
+        ArrayList<Task> listTasks = new ArrayList<>(getPrioritizedTasks().values());
+
+        return IntStream.range(0, listTasks.size() - 1)
+                .anyMatch(i -> {
+                    boolean taskOverlap = false;
+                    LocalDateTime currentTaskEndTime = listTasks.get(i).getEndTime();
+                    LocalDateTime currentTaskStartTime = listTasks.get(i).getStartTime();
+                    LocalDateTime checkTaskEndTime = task.getEndTime();
+
+                    if (checkTaskEndTime.isAfter(currentTaskStartTime) && checkTaskEndTime.isBefore(currentTaskEndTime)) {
+                        System.out.println("пересечение с - " + listTasks.get(i).getStartTime());
+                        taskOverlap = true;
+                    }
+                    return taskOverlap;
+                });
+    }
+
+    @Override
     public int addNewTask(Task task) {
-        final int id = ++idTask;
-        task.setId(id);
-        tasks.put(id, task);
-        return task.getId();
+
+        try {
+            if (task.getStartTime() == null || task.getDuration() == null) {
+                throw new ManagerSaveException("В задаче " + task.getName() + "не определенно startTime и Duration." +
+                        "Задача не будет сохранена!");
+            }
+
+            if (isTasksOverlap(task)) {
+                throw new ManagerSaveException("Задача \" + task.getName() + \" пересекается по времени с уже существующими!");
+            }
+
+            final int id = ++idTask;
+            task.setId(id);
+            tasks.put(id, task);
+            return task.getId();
+        } catch (ManagerSaveException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return -1;
     }
 
     @Override
     public int addNewEpic(Epic epic) {
+
         final int id = ++idTask;
         epic.setId(id);
         epics.put(id, epic);
         return epic.getId();
+
     }
 
     @Override
     public int addNewSubtask(Subtask subtask) {
-        final int id = ++idTask;
-        subtask.setId(id);
-        subtasks.put(id, subtask);
-        epics.get(subtask.getEpicId()).getSubtasksInThisEpic().add(subtask);
-        return subtask.getId();
+        try {
+            if (subtask.getStartTime() == null || subtask.getDuration() == null) {
+                throw new ManagerSaveException("В задаче " + subtask.getName() + "не определенно startTime и Duration." +
+                        "Задача не будет сохранена!");
+            }
+
+            if (isTasksOverlap(subtask)) {
+                throw new ManagerSaveException("Задача \" + task.getName() + \" пересекается по времени с уже существующими!");
+            }
+
+            final int id = ++idTask;
+            subtask.setId(id);
+            subtasks.put(id, subtask);
+            epics.get(subtask.getEpicId()).getSubtasksInThisEpic().add(subtask);
+            return subtask.getId();
+        } catch (ManagerSaveException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return -1;
     }
 
     @Override
@@ -114,6 +184,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Subtask getSubtask(int id) {
+
         historyManager.add(subtasks.get(id));
         return subtasks.get(id);
     }
