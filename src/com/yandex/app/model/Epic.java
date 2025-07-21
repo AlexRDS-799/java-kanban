@@ -25,7 +25,7 @@ public class Epic extends Task {
     }
 
     @Override
-    public Duration getDuration(){
+    public Duration getDuration() {
         this.duration = subtasksInThisEpic.stream()
                 .map(Subtask::getDuration)
                 .filter(Objects::nonNull)
@@ -34,7 +34,7 @@ public class Epic extends Task {
     }
 
     @Override
-    public LocalDateTime getStartTime(){
+    public LocalDateTime getStartTime() {
         Optional<LocalDateTime> startTimeOpt = subtasksInThisEpic.stream()
                 .map(Subtask::getStartTime)
                 .filter(Objects::nonNull)
