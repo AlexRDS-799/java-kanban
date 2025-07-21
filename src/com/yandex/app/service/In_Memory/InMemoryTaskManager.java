@@ -63,7 +63,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         try {
             if (task.getStartTime() == null || task.getDuration() == null) {
-                throw new ManagerSaveException("В задаче " + task.getName() + "не определенно startTime и Duration." +
+                throw new ManagerSaveException("В задаче " + task.getName() + " не определенно startTime и Duration." +
                         "Задача не будет сохранена!");
             }
 
@@ -96,7 +96,7 @@ public class InMemoryTaskManager implements TaskManager {
     public int addNewSubtask(Subtask subtask) {
         try {
             if (subtask.getStartTime() == null || subtask.getDuration() == null) {
-                throw new ManagerSaveException("В задаче " + subtask.getName() + "не определенно startTime и Duration." +
+                throw new ManagerSaveException("В задаче " + subtask.getName() + " не определенно startTime и Duration." +
                         "Задача не будет сохранена!");
             }
 
