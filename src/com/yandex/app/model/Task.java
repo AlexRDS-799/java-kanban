@@ -20,13 +20,11 @@ public class Task {
     }
 
     public LocalDateTime getEndTime() {
-        try {
-            return this.startTime.plus(this.duration);
-        } catch (Exception e) {
-            System.out.println("В задаче не задано стартовое время или время на её выполнение");
-            System.out.println(e.getMessage());
+        if (this.startTime == null || this.duration == null) {
+            return null;
         }
-        return null;
+
+        return this.startTime.plus(this.duration);
     }
 
     public void setDuration(Duration duration) {

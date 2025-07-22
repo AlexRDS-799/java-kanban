@@ -43,7 +43,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         return arrayHistory;
     }
 
-
     private Node<Integer, Task> linkLast(Task task) {
         Node<Integer, Task> newNode = new Node<>(task.getId(), task);
 

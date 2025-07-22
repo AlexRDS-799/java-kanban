@@ -25,7 +25,7 @@ public class Main {
         task1.setStartTime(LocalDateTime.parse("2025-07-15 12:00:00", formatter));
 
         task2.setDuration(Duration.ofMinutes(50));
-        task2.setStartTime(LocalDateTime.parse("2025-07-16 12:00:00", formatter));
+        task2.setStartTime(LocalDateTime.parse("2025-07-10 12:00:00", formatter));
 
         fileBackedTaskManager.addNewTask(task1);
         fileBackedTaskManager.addNewTask(task2);

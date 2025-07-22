@@ -10,7 +10,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.TreeMap;
 
 
 public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
@@ -168,11 +167,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         int subtaskId = super.addNewSubtask(subtask);
         save();
         return subtaskId;
-    }
-
-    @Override
-    public TreeMap<LocalDateTime, Task> getPrioritizedTasks() {
-        return super.getPrioritizedTasks();
     }
 
     @Override

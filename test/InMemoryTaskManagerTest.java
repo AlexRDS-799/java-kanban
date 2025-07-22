@@ -17,6 +17,7 @@ class InMemoryTaskManagerTest {
     //в этом же тесте проверена инициализация объектов через класс Managers. Создается дефолтный менеджер с обнуленным idTasks
     private static TaskManager taskManager;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     @BeforeEach
     void beforeEach() {
         taskManager = Managers.getDefault();

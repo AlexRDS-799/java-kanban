@@ -10,7 +10,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.TreeMap;
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -106,14 +107,14 @@ class InMemoryHistoryManagerTest {
         LocalDateTime subtask1Time = subtask1.getStartTime();
         LocalDateTime subtask2Time = subtask2.getStartTime();
 
-        TreeMap<LocalDateTime, Task> tasksStartTime = taskManager.getPrioritizedTasks();
-        ArrayList<LocalDateTime> keys = new ArrayList<>(tasksStartTime.keySet());
-        //Проверяем что задача с epic1 с таким же ключом как у сабтаска не попал в мапу
-        assertEquals(3, keys.size());
+        Set<Task> tasksStartTime = taskManager.getPrioritizedTasks();
+        List<Task> tasksPrior = new ArrayList<>(tasksStartTime);
+        //Проверяем что задача epic1 с таким же startTime как у сабтаска не попала в сет
+        assertEquals(3, tasksPrior.size());
         //Проверяем что задачи отсортированы по startTime
-        assertEquals(keys.get(0), subtask1Time);
-        assertEquals(keys.get(1), task1Time);
-        assertEquals(keys.get(2), subtask2Time);
+        assertEquals(tasksPrior.get(0).getStartTime(), subtask1Time);
+        assertEquals(tasksPrior.get(1).getStartTime(), task1Time);
+        assertEquals(tasksPrior.get(2).getStartTime(), subtask2Time);
     }
 
     public void getTaskNumberTimes(Task task, int times) {

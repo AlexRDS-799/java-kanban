@@ -7,41 +7,31 @@ import com.yandex.app.model.Task;
 import com.yandex.app.service.Interfaces.HistoryManager;
 import com.yandex.app.service.Interfaces.TaskManager;
 import com.yandex.app.service.Managers;
-import com.yandex.app.service.TaskManagerExceptions.ManagerSaveException;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 
 public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Task> tasks = new HashMap<>();
     protected final HashMap<Integer, Epic> epics = new HashMap<>();
     protected final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    protected final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
     protected int idTask = 0;
 
 
     protected HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
-    public TreeMap<LocalDateTime, Task> getPrioritizedTasks() {
-
-        return Stream.of(tasks, subtasks)
-                .flatMap(map -> map.entrySet().stream())
-                .filter(entry -> entry.getValue().getStartTime() != null)
-                .collect(Collectors.toMap(
-                        entry -> entry.getValue().getStartTime(),
-                        Map.Entry::getValue,
-                        (startTime1, startTime2) -> startTime2,
-                        TreeMap::new
-                ));
+    public Set<Task> getPrioritizedTasks() {
+        return prioritizedTasks;
     }
 
-    @Override
-    public boolean isTasksOverlap(Task task) {
-        ArrayList<Task> listTasks = new ArrayList<>(getPrioritizedTasks().values());
+
+    private boolean isTasksOverlap(Task task) {
+        List<Task> listTasks = new ArrayList<>(prioritizedTasks);
+
 
         return IntStream.range(0, listTasks.size() - 1)
                 .anyMatch(i -> {
@@ -60,26 +50,14 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int addNewTask(Task task) {
-
-        try {
-            if (task.getStartTime() == null || task.getDuration() == null) {
-                throw new ManagerSaveException("В задаче " + task.getName() + " не определенно startTime и Duration." +
-                        "Задача не будет сохранена!");
-            }
-
-            if (isTasksOverlap(task)) {
-                throw new ManagerSaveException("Задача \" + task.getName() + \" пересекается по времени с уже существующими!");
-            }
-
-            final int id = ++idTask;
-            task.setId(id);
-            tasks.put(id, task);
-            return task.getId();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
+        if (isTasksOverlap(task) || task.getEndTime() == null) {
+            return -1;
         }
-
-        return -1;
+        final int id = ++idTask;
+        task.setId(id);
+        tasks.put(id, task);
+        prioritizedTasks.add(task);
+        return task.getId();
     }
 
     @Override
@@ -94,26 +72,15 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int addNewSubtask(Subtask subtask) {
-        try {
-            if (subtask.getStartTime() == null || subtask.getDuration() == null) {
-                throw new ManagerSaveException("В задаче " + subtask.getName() + " не определенно startTime и Duration." +
-                        "Задача не будет сохранена!");
-            }
-
-            if (isTasksOverlap(subtask)) {
-                throw new ManagerSaveException("Задача \" + task.getName() + \" пересекается по времени с уже существующими!");
-            }
-
-            final int id = ++idTask;
-            subtask.setId(id);
-            subtasks.put(id, subtask);
-            epics.get(subtask.getEpicId()).getSubtasksInThisEpic().add(subtask);
-            return subtask.getId();
-        } catch (ManagerSaveException e) {
-            System.out.println(e.getMessage());
+        if (isTasksOverlap(subtask) || subtask.getEndTime() == null) {
+            return -1;
         }
-
-        return -1;
+        final int id = ++idTask;
+        subtask.setId(id);
+        subtasks.put(id, subtask);
+        epics.get(subtask.getEpicId()).getSubtasksInThisEpic().add(subtask);
+        prioritizedTasks.add(subtask);
+        return subtask.getId();
     }
 
     @Override
