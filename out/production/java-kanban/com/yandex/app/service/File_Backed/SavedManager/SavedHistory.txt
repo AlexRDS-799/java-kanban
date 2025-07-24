@@ -1,2 +1,0 @@
-id,type,name,status,description,startTime,duration,epic
-1,TASK,Task1,NEW,first task,2025-07-15 12:00:00,10

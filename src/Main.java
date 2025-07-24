@@ -58,7 +58,15 @@ public class Main {
         System.out.println("epics: " + fileBackedTaskManager.epicsList());
         System.out.println("subtasks: " + fileBackedTaskManager.subtasksList());
         System.out.println("history: " + fileBackedTaskManager.getHistory());
-////
+
+        fileBackedTaskManager.clearAllEpics();
+
+        System.out.println("Список после удаления всех епик: ");
+        System.out.println("Список задач по приоритету: " + fileBackedTaskManager.getPrioritizedTasks());
+        System.out.println("tasks: " + fileBackedTaskManager.tasksList());
+        System.out.println("epics: " + fileBackedTaskManager.epicsList());
+        System.out.println("subtasks: " + fileBackedTaskManager.subtasksList());
+        System.out.println("history: " + fileBackedTaskManager.getHistory());
 //        System.out.println("Hello world!");
 //        System.out.println("Hello world!");
 //        System.out.println("Hello world!");
