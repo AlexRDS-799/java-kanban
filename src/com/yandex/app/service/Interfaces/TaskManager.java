@@ -5,6 +5,7 @@ import com.yandex.app.model.Subtask;
 import com.yandex.app.model.Task;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public interface TaskManager {
 
@@ -47,6 +48,8 @@ public interface TaskManager {
     void deleteEpic(int id);
 
     void deleteSubtask(int id);
+
+    Set<Task> getPrioritizedTasks();
 
 
 }

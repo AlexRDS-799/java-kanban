@@ -8,41 +8,79 @@ import com.yandex.app.service.Interfaces.HistoryManager;
 import com.yandex.app.service.Interfaces.TaskManager;
 import com.yandex.app.service.Managers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 
 public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Task> tasks = new HashMap<>();
     protected final HashMap<Integer, Epic> epics = new HashMap<>();
     protected final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    protected final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
     protected int idTask = 0;
 
 
     protected HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
+    public Set<Task> getPrioritizedTasks() {
+        return prioritizedTasks;
+    }
+
+
+    private boolean isTasksOverlap(Task task) {
+        List<Task> listTasks = new ArrayList<>(prioritizedTasks);
+
+
+        return IntStream.range(0, listTasks.size() - 1)
+                .anyMatch(i -> {
+                    boolean taskOverlap = false;
+                    LocalDateTime currentTaskEndTime = listTasks.get(i).getEndTime();
+                    LocalDateTime currentTaskStartTime = listTasks.get(i).getStartTime();
+                    LocalDateTime checkTaskEndTime = task.getEndTime();
+
+                    if (checkTaskEndTime.isAfter(currentTaskStartTime) && checkTaskEndTime.isBefore(currentTaskEndTime)) {
+                        System.out.println("пересечение с - " + listTasks.get(i).getStartTime());
+                        taskOverlap = true;
+                    }
+                    return taskOverlap;
+                });
+    }
+
+    @Override
     public int addNewTask(Task task) {
+        if (isTasksOverlap(task) || task.getEndTime() == null) {
+            return -1;
+        }
         final int id = ++idTask;
         task.setId(id);
         tasks.put(id, task);
+        prioritizedTasks.add(task);
         return task.getId();
     }
 
     @Override
     public int addNewEpic(Epic epic) {
+
         final int id = ++idTask;
         epic.setId(id);
         epics.put(id, epic);
         return epic.getId();
+
     }
 
     @Override
     public int addNewSubtask(Subtask subtask) {
+        if (isTasksOverlap(subtask) || subtask.getEndTime() == null) {
+            return -1;
+        }
         final int id = ++idTask;
         subtask.setId(id);
         subtasks.put(id, subtask);
         epics.get(subtask.getEpicId()).getSubtasksInThisEpic().add(subtask);
+        prioritizedTasks.add(subtask);
         return subtask.getId();
     }
 
@@ -68,35 +106,35 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void clearAllTasks() {
-        for (Task task : tasks.values()) {
-            historyManager.remove(task);
-        }
+        tasks.values().stream()
+                .peek(task -> historyManager.remove(task))
+                .peek(prioritizedTasks::remove)
+                .toList();
         tasks.clear();
     }
 
     @Override
     public void clearAllEpics() {
-        for (Epic epic : epics.values()) {
-            historyManager.remove(epic);
-        }
+        Stream.concat(epics.values().stream(), subtasks.values().stream())
+                .forEach(item -> {
+                    historyManager.remove(item);
+                    prioritizedTasks.remove(item);
+                });
 
-        for (Subtask subtask : subtasks.values()) {
-            historyManager.remove(subtask);
-        }
         epics.clear();
         subtasks.clear();
     }
 
     @Override
     public void clearAllSubtasks() {
-        for (Subtask subtask : subtasks.values()) {
-            historyManager.remove(subtask);
-        }
+        subtasks.values().stream()
+                .forEach(item -> {
+                    historyManager.remove(item);
+                    prioritizedTasks.remove(item);
+                });
+        epics.values().stream()
+                .forEach(epic -> epic.setStatus(Status.NEW));
 
-        for (Epic epic : epics.values()) {
-            epic.getSubtasksInThisEpic().clear();
-            epic.setStatus(Status.NEW);
-        }
         subtasks.clear();
     }
 
@@ -114,6 +152,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Subtask getSubtask(int id) {
+
         historyManager.add(subtasks.get(id));
         return subtasks.get(id);
     }
@@ -125,7 +164,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(Task task) {
+        prioritizedTasks.add(task);
         tasks.put(task.getId(), task);
+
     }
 
     @Override
@@ -136,6 +177,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateSubtask(Subtask subtask) {
+        prioritizedTasks.add(subtask);
         subtasks.put(subtask.getId(), subtask);
         updateEpicStatus(subtask.getEpicId());
     }
@@ -143,6 +185,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteTask(int id) {
         historyManager.remove(tasks.get(id));
+        prioritizedTasks.remove(tasks.get(id));
         tasks.remove(id);
     }
 
@@ -152,6 +195,7 @@ public class InMemoryTaskManager implements TaskManager {
         ArrayList<Subtask> subtasksInEpic = epics.get(id).getSubtasksInThisEpic();
         for (Subtask subtask : subtasksInEpic) {
             historyManager.remove(subtask);
+            prioritizedTasks.remove(subtask);
         }
         epics.get(id).getSubtasksInThisEpic().clear();
         epics.remove(id);
@@ -160,6 +204,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteSubtask(int id) {
         historyManager.remove(subtasks.get(id));
+        prioritizedTasks.remove(subtasks.get(id));
         epics.get(subtasks.get(id).getEpicId()).getSubtasksInThisEpic().remove(subtasks.get(id));
         subtasks.remove(id);
     }

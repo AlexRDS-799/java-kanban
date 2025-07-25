@@ -6,12 +6,17 @@ import com.yandex.app.service.Managers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
 
     //в этом же тесте проверена инициализация объектов через класс Managers. Создается дефолтный менеджер с обнуленным idTasks
     private static TaskManager taskManager;
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @BeforeEach
     void beforeEach() {
@@ -21,6 +26,8 @@ class InMemoryTaskManagerTest {
     @Test
     void addNewTask() {
         Task task = new Task("Name", "Description");
+        task.setDuration(Duration.ofMinutes(10));
+        task.setStartTime(LocalDateTime.parse("2025-01-02 00:00:00", formatter));
         final int taskId = taskManager.addNewTask(task);
 
         final Task taskTest = taskManager.getTask(taskId);
@@ -54,6 +61,8 @@ class InMemoryTaskManagerTest {
         Epic epic = new Epic("Name", "Description");
         taskManager.addNewEpic(epic);
         Subtask subtask = new Subtask("Name", "Description", epic.getId());
+        subtask.setDuration(Duration.ofMinutes(10));
+        subtask.setStartTime(LocalDateTime.parse("2025-01-01 00:00:00", formatter));
         final int subtaskId = taskManager.addNewSubtask(subtask);
 
         Subtask subtaskTest = taskManager.getSubtask(subtaskId);
@@ -69,8 +78,12 @@ class InMemoryTaskManagerTest {
         Epic epic = new Epic("Name", "Description");
         taskManager.addNewEpic(epic);
         Task task = new Task("Name", "Description");
+        task.setDuration(Duration.ofMinutes(10));
+        task.setStartTime(LocalDateTime.parse("2025-01-02 00:00:00", formatter));
         taskManager.addNewTask(task);
         Subtask subtask = new Subtask("Name", "Description", epic.getId());
+        subtask.setDuration(Duration.ofMinutes(10));
+        subtask.setStartTime(LocalDateTime.parse("2025-01-01 00:00:00", formatter));
         taskManager.addNewSubtask(subtask);
 
         assertEquals(epic, taskManager.getEpic(1));
