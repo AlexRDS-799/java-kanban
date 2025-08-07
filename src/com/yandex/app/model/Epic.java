@@ -50,6 +50,6 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return this.description;
+        return "ID: "+this.id+ " Эпик: "+this.name + " Описание: "+this.description;
     }
 }

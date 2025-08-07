@@ -1,3 +1,7 @@
 id,type,name,status,description,startTime,duration,epic
 1,TASK,Task1,NEW,first task,2025-07-15 12:00:00,10
 2,TASK,Task2,NEW,second task,2025-07-10 12:00:00,50
+3,EPIC,Epic1,NEW,first epic,2025-07-17 15:20:00,130
+4,SUBTASK,Subtask1,NEW,first subtask,2025-07-17 15:20:00,40,3
+5,SUBTASK,Subtask2,NEW,second subtask,2025-07-17 15:30:00,10,3
+6,SUBTASK,Subtask3,NEW,third subtask,2025-07-19 12:40:00,80,3

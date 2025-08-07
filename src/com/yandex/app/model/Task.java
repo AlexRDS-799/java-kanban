@@ -87,6 +87,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return this.description;
+        return "ID: "+this.id+ " Задача: "+this.name + " Описание: "+this.description;
     }
 }
