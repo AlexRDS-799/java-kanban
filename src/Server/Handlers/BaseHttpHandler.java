@@ -5,21 +5,21 @@ import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-public class BaseHttpHandler{
+public class BaseHttpHandler {
 
-    public void sendText(HttpExchange exchange, String response){
+    public void sendText(HttpExchange exchange, String response) {
         byte[] resp = response.getBytes(StandardCharsets.UTF_8);
         try {
             exchange.getResponseHeaders().set("Content-Type", "application/json");
             exchange.sendResponseHeaders(200, resp.length);
             exchange.getResponseBody().write(resp);
             exchange.close();
-        }catch (IOException e){
+        } catch (IOException e) {
             throw new RuntimeException();
         }
     }
 
-    public void sendNotFound(HttpExchange exchange, String text, int id){
+    public void sendNotFound(HttpExchange exchange, String text, int id) {
         byte[] resp = text.getBytes(StandardCharsets.UTF_8);
         try {
             exchange.getResponseHeaders().set("Content-Type", "application/json");
@@ -31,20 +31,28 @@ public class BaseHttpHandler{
         }
     }
 
-    public void sendHasInteractions(HttpExchange exchange, String text){
-
+    public void sendHasInteractions(HttpExchange exchange, String text, int id) {
+        byte[] resp = text.getBytes(StandardCharsets.UTF_8);
+        try {
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
+            exchange.sendResponseHeaders(id, resp.length);
+            exchange.getResponseBody().write(resp);
+            exchange.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
-    public Endpoint getEndpoint(HttpExchange exchange){
+    public Endpoint getEndpoint(HttpExchange exchange) {
         String path = exchange.getRequestURI().getPath();
         String[] pathArray = path.split("/");
 
         String method = exchange.getRequestMethod();
 
-        switch (method){
+        switch (method) {
             case "GET":
-                if (pathArray.length == 2){
+                if (pathArray.length == 2) {
                     return switch (pathArray[1]) {
                         case "tasks" -> Endpoint.GET_TASKS;
                         case "subtasks" -> Endpoint.GET_SUBTASKS;
@@ -68,8 +76,8 @@ public class BaseHttpHandler{
                 }
                 return Endpoint.UNKNOW;
             case "POST":
-                if (pathArray.length == 2){
-                    return switch (pathArray[1]){
+                if (pathArray.length == 2) {
+                    return switch (pathArray[1]) {
                         case "tasks" -> Endpoint.POST_TASKS;
                         case "subtasks" -> Endpoint.POST_SUBTASKS;
                         case "epics" -> Endpoint.POST_EPICS;
@@ -78,8 +86,8 @@ public class BaseHttpHandler{
                 }
                 return Endpoint.UNKNOW;
             case "DELETE":
-                if (pathArray.length == 3){
-                    return switch (pathArray[1]){
+                if (pathArray.length == 3) {
+                    return switch (pathArray[1]) {
                         case "tasks" -> Endpoint.DELETE_TASKS_ID;
                         case "subtasks" -> Endpoint.DELETE_SUBTASKS_ID;
                         case "epics" -> Endpoint.DELETE_EPICS_ID;

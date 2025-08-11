@@ -15,6 +15,6 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "ID: "+this.id+ " Подзадача: "+this.name + " Описание: "+this.description;
+        return "ID: " + this.id + " Подзадача: " + this.name + " Описание: " + this.description;
     }
 }
