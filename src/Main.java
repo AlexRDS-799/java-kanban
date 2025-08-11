@@ -1,17 +1,7 @@
 
-import Server.Handlers.DurationTypeAdapter;
-import Server.Handlers.LocalDateTimeTypeAdapter;
-import Server.Handlers.TaslsListTypeToken;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.yandex.app.model.Epic;
-import com.yandex.app.model.Subtask;
-import com.yandex.app.model.Task;
 import com.yandex.app.service.Interfaces.TaskManager;
 import com.yandex.app.service.Managers;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Main {
@@ -22,7 +12,6 @@ public class Main {
                 "\\service\\File_Backed\\SavedManager\\SavedHistory.txt";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         TaskManager fileBackedTaskManager = Managers.getFileBackedManager(pathTasks, pathHistory);
-
 
 
 //
