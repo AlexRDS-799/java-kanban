@@ -1,78 +1,40 @@
 package Server.Handlers;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.yandex.app.model.Epic;
-import com.yandex.app.model.Subtask;
-import com.yandex.app.model.Task;
-import com.yandex.app.service.Interfaces.TaskManager;
-import com.yandex.app.service.Managers;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.net.URI;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.stream.Collectors;
 
-public class BaseHttpHandler implements HttpHandler {
-    List<Task> tasks;
+public class BaseHttpHandler{
 
-    private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-
-    public BaseHttpHandler(List<Task> tasks){
-        this.tasks = tasks;
-    }
-
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
-        Endpoint endpoint = getEndpoint(exchange);
-
-        switch (endpoint){
-
-            case Endpoint.GET_TASKS:
-                handleGetTasks(exchange);
-                break;
-            case Endpoint.GET_SUBTASKS:
-                handleGetTasks(exchange);
-                break;
-            case Endpoint.GET_EPICS:
-                handleGetTasks(exchange);
-                break;
-        }
-
-    }
-
-    public void handleGetTasks(HttpExchange exchange) {
-
-        String response = tasks.stream()
-                .map(Task::toString)
-                .collect(Collectors.joining("\n"));
-        writeResponse(exchange,response, 200);
-    }
-
-    public void handleGetSubtasks(HttpExchange exchange){
-
-
-    }
-
-    public void writeResponse(HttpExchange exchange, String response, int code)  {
+    public void sendText(HttpExchange exchange, String response){
+        byte[] resp = response.getBytes(StandardCharsets.UTF_8);
         try {
-            try (OutputStream os = exchange.getResponseBody()) {
-                exchange.getResponseHeaders().set("Content-Type", "text/plain");
-                exchange.sendResponseHeaders(code, 0);
-                os.write(response.getBytes(DEFAULT_CHARSET));
-                os.flush();
-                            }
-        }catch (IOException e){
-            e.printStackTrace();
-        }finally {
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
+            exchange.sendResponseHeaders(200, resp.length);
+            exchange.getResponseBody().write(resp);
             exchange.close();
+        }catch (IOException e){
+            throw new RuntimeException();
         }
     }
+
+    public void sendNotFound(HttpExchange exchange, String text, int id){
+        byte[] resp = text.getBytes(StandardCharsets.UTF_8);
+        try {
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
+            exchange.sendResponseHeaders(id, resp.length);
+            exchange.getResponseBody().write(resp);
+            exchange.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void sendHasInteractions(HttpExchange exchange, String text){
+
+    }
+
 
     public Endpoint getEndpoint(HttpExchange exchange){
         String path = exchange.getRequestURI().getPath();

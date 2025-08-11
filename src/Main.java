@@ -1,4 +1,9 @@
 
+import Server.Handlers.DurationTypeAdapter;
+import Server.Handlers.LocalDateTimeTypeAdapter;
+import Server.Handlers.TaslsListTypeToken;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.yandex.app.model.Epic;
 import com.yandex.app.model.Subtask;
 import com.yandex.app.model.Task;
@@ -11,13 +16,15 @@ import java.time.format.DateTimeFormatter;
 
 public class Main {
     public static void main(String[] args) {
+        String pathTasks = "C:\\Users\\Alexandr\\IdeaProjects\\java-kanban\\src\\com\\yandex\\app" +
+                "\\service\\File_Backed\\SavedManager\\SavedTasks.txt";
+        String pathHistory = "C:\\Users\\Alexandr\\IdeaProjects\\java-kanban\\src\\com\\yandex\\app" +
+                "\\service\\File_Backed\\SavedManager\\SavedHistory.txt";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        TaskManager fileBackedTaskManager = Managers.getFileBackedManager(pathTasks, pathHistory);
 
-//        String pathTasks = "C:\\Users\\Alexandr\\IdeaProjects\\java-kanban\\src\\com\\yandex\\app" +
-//                "\\service\\File_Backed\\SavedManager\\SavedTasks.txt";
-//        String pathHistory = "C:\\Users\\Alexandr\\IdeaProjects\\java-kanban\\src\\com\\yandex\\app" +
-//                "\\service\\File_Backed\\SavedManager\\SavedHistory.txt";
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//        TaskManager fileBackedTaskManager = Managers.getFileBackedManager(pathTasks, pathHistory);
+
+
 //
 //        Task task1 = new Task("Task1", "first task");
 //        Task task2 = new Task("Task2", "second task");

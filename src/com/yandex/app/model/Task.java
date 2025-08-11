@@ -32,7 +32,7 @@ public class Task {
     }
 
     public Duration getDuration() {
-        return duration;
+        return this.duration;
     }
 
     public void setStartTime(LocalDateTime startTime) {
