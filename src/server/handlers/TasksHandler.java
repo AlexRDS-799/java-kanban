@@ -1,25 +1,22 @@
-package Server.Handlers;
+package server.handlers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import com.yandex.app.model.Subtask;
+import com.yandex.app.model.Task;
 import com.yandex.app.service.Interfaces.TaskManager;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
+public class TasksHandler extends BaseHttpHandler implements HttpHandler {
     private final TaskManager fileBackedTaskManager;
 
-    public SubtasksHandler(TaskManager fileBackedTaskManager) {
+    public TasksHandler(TaskManager fileBackedTaskManager) {
         this.fileBackedTaskManager = fileBackedTaskManager;
     }
 
@@ -28,31 +25,32 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
         Endpoint endpoint = getEndpoint(exchange);
 
         switch (endpoint) {
-            case GET_SUBTASKS -> handleGetSubtasks(exchange);
-            case GET_SUBTASKS_ID -> handleGetSubtasksId(exchange);
-            case POST_SUBTASKS -> handlePostSubtasks(exchange);
-            case DELETE_SUBTASKS_ID -> handleDeleteSubtasksId(exchange);
+            case GET_TASKS -> handleGetTasks(exchange);
+            case GET_TASKS_ID -> handleGetTasksId(exchange);
+            case POST_TASKS -> handlePostTasks(exchange);
+            case DELETE_TASKS_ID -> handleDeleteTasksId(exchange);
             default -> sendNotFound(exchange, "Данный метод не реализован", 404);
         }
+
     }
 
-    public void handleGetSubtasks(HttpExchange exchange) {
+    public void handleGetTasks(HttpExchange exchange) {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter());
         gsonBuilder.registerTypeAdapter(Duration.class, new DurationTypeAdapter());
         Gson gson = gsonBuilder.create();
 
-        List<Subtask> subtasks = fileBackedTaskManager.subtasksList();
-        if (subtasks.isEmpty()) {
+        List<Task> tasks = fileBackedTaskManager.tasksList();
+        if (tasks.isEmpty()) {
             sendNotFound(exchange, "Список задач пуст", 404);
             return;
         }
 
-        String response = gson.toJson(subtasks, new TaslsListTypeToken().getType());
+        String response = gson.toJson(tasks, new TaslsListTypeToken().getType());
         sendText(exchange, response);
     }
 
-    public void handleGetSubtasksId(HttpExchange exchange) {
+    public void handleGetTasksId(HttpExchange exchange) {
         String path = exchange.getRequestURI().getPath();
         String[] pathSplit = path.split("/");
         int taskId = Integer.parseInt(pathSplit[2]);
@@ -62,18 +60,18 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
         gsonBuilder.registerTypeAdapter(Duration.class, new DurationTypeAdapter());
         Gson gson = gsonBuilder.create();
 
-        Subtask subtask = fileBackedTaskManager.getSubtask(taskId);
+        Task task = fileBackedTaskManager.getTask(taskId);
 
-        if (subtask == null) {
+        if (task == null) {
             sendNotFound(exchange, "Такой задачи не существует", 404);
             return;
         }
 
-        String response = gson.toJson(subtask);
+        String response = gson.toJson(task);
         sendText(exchange, response);
     }
 
-    public void handlePostSubtasks(HttpExchange exchange) {
+    public void handlePostTasks(HttpExchange exchange) {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter());
         gsonBuilder.registerTypeAdapter(Duration.class, new DurationTypeAdapter());
@@ -81,40 +79,39 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
 
         try (InputStream is = exchange.getRequestBody();
              Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-            Subtask subtask = gson.fromJson(reader, Subtask.class);
-            if (subtask == null) {
+            Task task = gson.fromJson(reader, Task.class);
+            if (task == null) {
                 sendNotFound(exchange, "Переданная задача пустая", 404);
                 return;
             }
-            if (fileBackedTaskManager.subtasksList().contains(subtask)) {
-                fileBackedTaskManager.updateSubtask(subtask);
-                sendText(exchange, "Задача" + subtask.getName() + "обновлена");
+            if (fileBackedTaskManager.tasksList().contains(task)) {
+                fileBackedTaskManager.updateTask(task);
+                sendText(exchange, "Задача" + task.getName() + "обновлена");
                 return;
             }
-            fileBackedTaskManager.addNewSubtask(subtask);
-            if (!(fileBackedTaskManager.getSubtask(subtask.getId()) == null)) {
-                sendNotFound(exchange, "Ошибка при добавлении subtask!", 404);
+            fileBackedTaskManager.addNewTask(task);
+            if (!(fileBackedTaskManager.getTask(task.getId()) == null)) {
+                sendNotFound(exchange, "Ошибка при добавлении task!", 404);
                 return;
             }
-            sendText(exchange, "Задача" + subtask.getName() + "успешно добавлена в список, присвоен ID =" + subtask.getId());
+            sendText(exchange, "Задача" + task.getName() + "успешно добавлена в список, присвоен ID =" + task.getId());
 
         } catch (IOException e) {
-            sendNotFound(exchange, "Ошибка при добавлении задачи subtask!", 404);
+            sendNotFound(exchange, "Ошибка при добавлении задачи task!", 404);
         }
     }
 
-    public void handleDeleteSubtasksId(HttpExchange exchange) {
+    public void handleDeleteTasksId(HttpExchange exchange) {
         String path = exchange.getRequestURI().getPath();
         String[] splitPath = path.split("/");
         int taskId = Integer.parseInt(splitPath[2]);
 
 
-        if (fileBackedTaskManager.getSubtask(taskId) == null) {
+        if (fileBackedTaskManager.getTask(taskId) == null) {
             sendNotFound(exchange, "Такой задачи не существует!", 404);
         }
 
-        fileBackedTaskManager.deleteSubtask(taskId);
+        fileBackedTaskManager.deleteTask(taskId);
         sendText(exchange, "Задача успешно удалена!");
     }
-
 }

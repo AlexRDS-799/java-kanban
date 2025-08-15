@@ -1,6 +1,5 @@
-package Server.Handlers;
+package server.handlers;
 
-import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.yandex.app.model.Task;
 

@@ -1,7 +1,7 @@
-package Server;
+package server;
 
-import Server.Handlers.DurationTypeAdapter;
-import Server.Handlers.LocalDateTimeTypeAdapter;
+import server.handlers.DurationTypeAdapter;
+import server.handlers.LocalDateTimeTypeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.yandex.app.model.Epic;

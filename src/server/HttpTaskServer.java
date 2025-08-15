@@ -1,6 +1,6 @@
-package Server;
+package server;
 
-import Server.Handlers.*;
+import server.handlers.*;
 import com.sun.net.httpserver.HttpServer;
 import com.yandex.app.service.Interfaces.TaskManager;
 import com.yandex.app.service.Managers;
