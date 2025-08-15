@@ -30,20 +30,20 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
 
-    private boolean isTasksOverlap(Task task) {
+    public boolean isTasksOverlap(Task task) {
         List<Task> listTasks = new ArrayList<>(prioritizedTasks);
+        System.out.println(listTasks);
 
-
-        return IntStream.range(0, listTasks.size() - 1)
+        return IntStream.range(0, listTasks.size())
                 .anyMatch(i -> {
                     boolean taskOverlap = false;
                     LocalDateTime currentTaskEndTime = listTasks.get(i).getEndTime();
                     LocalDateTime currentTaskStartTime = listTasks.get(i).getStartTime();
                     LocalDateTime checkTaskEndTime = task.getEndTime();
+                    System.out.println(task.getName() + " сравниваем с " + listTasks.get(i).getName() + ": endTime " + currentTaskEndTime + " startTime " + currentTaskStartTime + " ПРоверяемый таск: " + checkTaskEndTime);
 
                     if (checkTaskEndTime.isAfter(currentTaskStartTime) && checkTaskEndTime.isBefore(currentTaskEndTime)) {
-                        System.out.println("пересечение с - " + listTasks.get(i).getStartTime());
-                        taskOverlap = true;
+                        return true;
                     }
                     return taskOverlap;
                 });

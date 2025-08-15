@@ -46,7 +46,7 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
             return;
         }
 
-        String response = gson.toJson(fileBackedTaskManager.tasksList(), new TaslsListTypeToken().getType());
+        String response = gson.toJson(tasks, new TaslsListTypeToken().getType());
         sendText(exchange, response);
     }
 
@@ -68,7 +68,6 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
         }
 
         String response = gson.toJson(task);
-        System.out.println(response);
         sendText(exchange, response);
     }
 

@@ -2,6 +2,7 @@
 import com.yandex.app.service.Interfaces.TaskManager;
 import com.yandex.app.service.Managers;
 
+
 import java.time.format.DateTimeFormatter;
 
 public class Main {
@@ -14,7 +15,6 @@ public class Main {
         TaskManager fileBackedTaskManager = Managers.getFileBackedManager(pathTasks, pathHistory);
 
 
-//
 //        Task task1 = new Task("Task1", "first task");
 //        Task task2 = new Task("Task2", "second task");
 //        task1.setDuration(Duration.ofMinutes(10));
@@ -48,6 +48,8 @@ public class Main {
 //        fileBackedTaskManager.addNewSubtask(subtask1);
 //        fileBackedTaskManager.addNewSubtask(subtask2);
 //        fileBackedTaskManager.addNewSubtask(subtask3);
+
+        System.out.println(fileBackedTaskManager.getPrioritizedTasks());
 //
 //        System.out.println("Список задач по приоритету: " + fileBackedTaskManager.getPrioritizedTasks());
 //        System.out.println("tasks: " + fileBackedTaskManager.tasksList());

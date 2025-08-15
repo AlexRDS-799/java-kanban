@@ -105,12 +105,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         switch (task.getTaskType()) {
             case TASK:
                 tasks.put(task.getId(), task);
+                if (!isTasksOverlap(task)) {
+                    prioritizedTasks.add(task);
+                }
                 break;
             case EPIC:
                 epics.put(task.getId(), (Epic) task);
                 break;
             case SUBTASK:
                 subtasks.put(task.getId(), (Subtask) task);
+                if (!isTasksOverlap(task)) {
+                    prioritizedTasks.add(task);
+                }
                 break;
         }
         return task.getId();

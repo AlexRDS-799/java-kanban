@@ -18,10 +18,9 @@ public class HttpTaskServer {
         String pathHistory = "C:\\Users\\Alexandr\\IdeaProjects\\java-kanban\\src\\com\\yandex\\app" +
                 "\\service\\File_Backed\\SavedManager\\SavedHistory.txt";
         TaskManager fileBackedTaskManager = Managers.getFileBackedManager(pathTasks, pathHistory);
-
+        System.out.println(fileBackedTaskManager.getPrioritizedTasks());
         //==============СЕРВЕР===========================
         HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
-        System.out.println(fileBackedTaskManager.tasksList());
         //TASKS
         TasksHandler tasksHandler = new TasksHandler(fileBackedTaskManager);
         server.createContext("/tasks", tasksHandler);
@@ -44,8 +43,8 @@ public class HttpTaskServer {
 
         System.out.println("Сервер запущен на " + PORT + " порту");
         server.start();
-
         //===============================================
+
 
     }
 

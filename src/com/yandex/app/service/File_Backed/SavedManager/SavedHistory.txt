@@ -1,3 +1,2 @@
 id,type,name,status,description,startTime,duration,epic
-3,TASK,Task2,NEW,second task,2025-10-10 12:00:00,50
-4,TASK,Task2,NEW,second task,2025-10-10 12:00:00,50
+1,TASK,Task1,NEW,first task,2025-07-15 12:00:00,10
