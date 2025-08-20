@@ -44,7 +44,7 @@ public class InMemoryTaskManager implements TaskManager {
                     if (checkTaskEndTime.isAfter(currentTaskStartTime) && checkTaskEndTime.isBefore(currentTaskEndTime)) {
                         return true;
                     }
-                    if (checkTaskEndTime.isEqual(currentTaskEndTime) && checkTaskStartTime.isEqual(currentTaskStartTime)){
+                    if (checkTaskEndTime.isEqual(currentTaskEndTime) && checkTaskStartTime.isEqual(currentTaskStartTime)) {
                         return true;
                     }
 
