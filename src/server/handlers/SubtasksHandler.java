@@ -44,7 +44,7 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
 
         List<Subtask> subtasks = fileBackedTaskManager.subtasksList();
         if (subtasks.isEmpty()) {
-            sendNotFound(exchange, "Список задач пуст", 404);
+            sendNotFound(exchange, "Список задач пуст", 200);
             return;
         }
 
@@ -82,6 +82,7 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
         try (InputStream is = exchange.getRequestBody();
              Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
             Subtask subtask = gson.fromJson(reader, Subtask.class);
+
             if (subtask == null) {
                 sendNotFound(exchange, "Переданная задача пустая", 404);
                 return;
@@ -92,7 +93,7 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
                 return;
             }
             fileBackedTaskManager.addNewSubtask(subtask);
-            if (!(fileBackedTaskManager.getSubtask(subtask.getId()) == null)) {
+            if (fileBackedTaskManager.getSubtask(subtask.getId()) == null) {
                 sendNotFound(exchange, "Ошибка при добавлении subtask!", 404);
                 return;
             }

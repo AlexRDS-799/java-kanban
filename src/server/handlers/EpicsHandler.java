@@ -28,6 +28,7 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         Endpoint endpoint = getEndpoint(exchange);
+
         switch (endpoint) {
             case GET_EPICS -> handleGetEpics(exchange);
             case GET_EPICS_ID -> handleGetEpicsId(exchange);
@@ -47,7 +48,7 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
         List<Epic> epics = fileBackedTaskManager.epicsList();
 
         if (epics.isEmpty()) {
-            sendNotFound(exchange, "Список задач пуст!", 404);
+            sendNotFound(exchange, "Список задач пуст!", 200);
             return;
         }
 
@@ -115,7 +116,6 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
         try (InputStream is = exchange.getRequestBody();
              Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
             Epic epic = gson.fromJson(reader, Epic.class);
-
             if (epic == null) {
                 sendNotFound(exchange, "Переданная задача пустая", 404);
                 return;
@@ -131,7 +131,7 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
                 sendNotFound(exchange, "Ошибка при добавлении epic!", 404);
                 return;
             }
-            sendText(exchange, "Задача" + epic.getName() + "успешно добавлена в список, присвоен ID =" + epic.getId());
+            sendText(exchange, "Задача " + epic.getName() + " успешно добавлена в список, присвоен ID = " + epic.getId());
         } catch (IOException e) {
             sendNotFound(exchange, "Ошибка при чтении запроса!", 404);
         }

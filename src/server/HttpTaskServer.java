@@ -3,24 +3,38 @@ package server;
 import server.handlers.*;
 import com.sun.net.httpserver.HttpServer;
 import com.yandex.app.service.Interfaces.TaskManager;
-import com.yandex.app.service.Managers;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
 public class HttpTaskServer {
     private static final int PORT = 8080;
+    static TaskManager filedBackedTaskManager;
+    static HttpServer server;
+
+    public HttpTaskServer(TaskManager taskManager) {
+        this.filedBackedTaskManager = taskManager;
+        try {
+            this.server = HttpServer.create(new InetSocketAddress(PORT), 0);
+        } catch (IOException e) {
+            String errorMessage = "Ошибка при создании сервера: " + e.getMessage();
+            throw new RuntimeException(errorMessage, e);
+        }
+    }
+
 
     public static void main(String[] args) throws IOException {
+        //для использования методов start stop в тестах, все методы сделал public, поэтому они пока
+        //не используются в main методе
+    }
 
-        String pathTasks = "C:\\Users\\Alexandr\\IdeaProjects\\java-kanban\\src\\com\\yandex\\app" +
-                "\\service\\File_Backed\\SavedManager\\SavedTasks.txt";
-        String pathHistory = "C:\\Users\\Alexandr\\IdeaProjects\\java-kanban\\src\\com\\yandex\\app" +
-                "\\service\\File_Backed\\SavedManager\\SavedHistory.txt";
-        TaskManager fileBackedTaskManager = Managers.getFileBackedManager(pathTasks, pathHistory);
-        System.out.println(fileBackedTaskManager.getPrioritizedTasks());
-        //==============СЕРВЕР===========================
-        HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
+    public void start() throws IOException {
+        System.out.println("Сервер запущен на " + PORT + " порту");
+        createAllContexts(server, filedBackedTaskManager);
+        server.start();
+    }
+
+    public static void createAllContexts(HttpServer server, TaskManager fileBackedTaskManager) {
         //TASKS
         TasksHandler tasksHandler = new TasksHandler(fileBackedTaskManager);
         server.createContext("/tasks", tasksHandler);
@@ -40,13 +54,11 @@ public class HttpTaskServer {
         //PRIORITIZED
         PrioritizedHandler prioritizedHandler = new PrioritizedHandler(fileBackedTaskManager);
         server.createContext("/prioritized", prioritizedHandler);
-
-        System.out.println("Сервер запущен на " + PORT + " порту");
-        server.start();
-        //===============================================
-
-
     }
 
+    public void stop() {
+        server.stop(0);
+        System.out.println("Сервер остановлен");
+    }
 }
 

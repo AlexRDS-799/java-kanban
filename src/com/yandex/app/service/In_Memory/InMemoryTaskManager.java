@@ -32,7 +32,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     public boolean isTasksOverlap(Task task) {
         List<Task> listTasks = new ArrayList<>(prioritizedTasks);
-        System.out.println(listTasks);
 
         return IntStream.range(0, listTasks.size())
                 .anyMatch(i -> {
@@ -40,11 +39,15 @@ public class InMemoryTaskManager implements TaskManager {
                     LocalDateTime currentTaskEndTime = listTasks.get(i).getEndTime();
                     LocalDateTime currentTaskStartTime = listTasks.get(i).getStartTime();
                     LocalDateTime checkTaskEndTime = task.getEndTime();
-                    System.out.println(task.getName() + " сравниваем с " + listTasks.get(i).getName() + ": endTime " + currentTaskEndTime + " startTime " + currentTaskStartTime + " ПРоверяемый таск: " + checkTaskEndTime);
+                    LocalDateTime checkTaskStartTime = task.getStartTime();
 
                     if (checkTaskEndTime.isAfter(currentTaskStartTime) && checkTaskEndTime.isBefore(currentTaskEndTime)) {
                         return true;
                     }
+                    if (checkTaskEndTime.isEqual(currentTaskEndTime) && checkTaskStartTime.isEqual(currentTaskStartTime)){
+                        return true;
+                    }
+
                     return taskOverlap;
                 });
     }
@@ -165,20 +168,19 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task task) {
         prioritizedTasks.add(task);
-        tasks.put(task.getId(), task);
-
+        addNewTask(task);
     }
 
     @Override
     public void updateEpic(Epic epic) {
-        epics.put(epic.getId(), epic);
+        addNewEpic(epic);
         updateEpicStatus(epic.getId());
     }
 
     @Override
     public void updateSubtask(Subtask subtask) {
         prioritizedTasks.add(subtask);
-        subtasks.put(subtask.getId(), subtask);
+        addNewSubtask(subtask);
         updateEpicStatus(subtask.getEpicId());
     }
 

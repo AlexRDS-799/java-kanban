@@ -42,10 +42,9 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
 
         List<Task> tasks = fileBackedTaskManager.tasksList();
         if (tasks.isEmpty()) {
-            sendNotFound(exchange, "Список задач пуст", 404);
+            sendNotFound(exchange, "Список задач пуст", 200);
             return;
         }
-
         String response = gson.toJson(tasks, new TaslsListTypeToken().getType());
         sendText(exchange, response);
     }
@@ -80,6 +79,7 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
         try (InputStream is = exchange.getRequestBody();
              Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
             Task task = gson.fromJson(reader, Task.class);
+
             if (task == null) {
                 sendNotFound(exchange, "Переданная задача пустая", 404);
                 return;
@@ -90,11 +90,12 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
                 return;
             }
             fileBackedTaskManager.addNewTask(task);
-            if (!(fileBackedTaskManager.getTask(task.getId()) == null)) {
+
+            if (fileBackedTaskManager.getTask(task.getId()) == null) {
                 sendNotFound(exchange, "Ошибка при добавлении task!", 404);
                 return;
             }
-            sendText(exchange, "Задача" + task.getName() + "успешно добавлена в список, присвоен ID =" + task.getId());
+            sendText(exchange, "Задача " + task.getName() + " успешно добавлена в список, присвоен ID =" + task.getId());
 
         } catch (IOException e) {
             sendNotFound(exchange, "Ошибка при добавлении задачи task!", 404);

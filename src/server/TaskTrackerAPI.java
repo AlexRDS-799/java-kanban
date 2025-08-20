@@ -22,78 +22,84 @@ public class TaskTrackerAPI {
 
     //ТАСКИ
 
-    public void getTasks() throws IOException, InterruptedException {
+    public HttpResponse<String> getTasks() throws IOException, InterruptedException {
         HttpRequest requestGetTasks = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(uriStandart + "/tasks"))
                 .build();
 
-        client.send(requestGetTasks, HttpResponse.BodyHandlers.ofString());
+        return client.send(requestGetTasks, HttpResponse.BodyHandlers.ofString());
     }
 
-    public void getTasksId(int id) throws IOException, InterruptedException {
+    public HttpResponse<String> getTasksId(int id) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(uriStandart + "/tasks/" + id))
                 .header("Content-Type", "application/json")
                 .GET()
                 .build();
 
-        client.send(request, HttpResponse.BodyHandlers.ofString());
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public HttpResponse<String> addTask(Task task) throws IOException, InterruptedException {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter());
-        gsonBuilder.registerTypeAdapter(Duration.class, new DurationTypeAdapter());
-        Gson gson = gsonBuilder.create();
-
+    public HttpResponse<String> addTask(Task task) {
+        Gson gson = getGson();
         String json = gson.toJson(task);
-
+        HttpResponse<String> response;
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(uriStandart + "/tasks"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 201) {
+                System.out.println("Успешно добавлена задача: " + task.getName());
+            }
+            if (response.statusCode() >= 400 && response.statusCode() <= 499) {
+                System.out.println("Проблема с запросом на добавление задачи: " + response.statusCode());
+                System.out.println(response.body());
+            }
+        } catch (IOException | InterruptedException e) {
+            String errorMessage = "Ошибка при отправке запроса: " + e.getMessage();
+            throw new RuntimeException(errorMessage, e);
+        }
+        return response;
     }
 
-    public void deleteTask(int id) throws IOException, InterruptedException {
+    public HttpResponse<String> deleteTask(int id) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(uriStandart + "/tasks/" + id))
                 .header("Content-Type", "application/json")
                 .DELETE()
                 .build();
 
-        client.send(request, HttpResponse.BodyHandlers.ofString());
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     //САБТАСКИ
 
-    public void getSubtasks() throws IOException, InterruptedException {
+    public HttpResponse<String> getSubtasks() throws IOException, InterruptedException {
         HttpRequest requestSubtasks = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(uriStandart + "/subtasks"))
                 .build();
 
-        client.send(requestSubtasks, HttpResponse.BodyHandlers.ofString());
+        return client.send(requestSubtasks, HttpResponse.BodyHandlers.ofString());
     }
 
-    public void getSubtasksId(int id) throws IOException, InterruptedException {
+    public HttpResponse<String> getSubtasksId(int id) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(uriStandart + "/subtasks/" + id))
                 .build();
-        client.send(request, HttpResponse.BodyHandlers.ofString());
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     public HttpResponse<String> addSubtask(Subtask subtask) throws IOException, InterruptedException {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter());
-        gsonBuilder.registerTypeAdapter(Duration.class, new DurationTypeAdapter());
-        Gson gson = gsonBuilder.create();
-
+        Gson gson = getGson();
         String json = gson.toJson(subtask);
+        HttpResponse<String> response;
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(uriStandart + "/subtasks"))
@@ -101,54 +107,64 @@ public class TaskTrackerAPI {
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
 
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 201) {
+                System.out.println("Успешно добавлен сабтаск: " + subtask.getName());
+            }
+            if (response.statusCode() >= 400 && response.statusCode() <= 499) {
+                System.out.println("Проблема с запросом на добавление сабтаска: " + response.statusCode());
+            }
+        } catch (IOException | InterruptedException e) {
+            String errorMessage = "Ошибка при отправке запроса: " + e.getMessage();
+            throw new RuntimeException(errorMessage, e);
+        }
+        return response;
 
     }
 
-    public void deleteSubtasksId(int id) throws IOException, InterruptedException {
+    public HttpResponse<String> deleteSubtasksId(int id) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(uriStandart + "/subtasks/" + id))
                 .header("Content-Type", "application/json")
                 .DELETE()
                 .build();
 
-        client.send(request, HttpResponse.BodyHandlers.ofString());
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     //ЭПИКИ
 
-    public void getEpic() throws IOException, InterruptedException {
+    public HttpResponse<String> getEpic() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(uriStandart + "/epics"))
                 .build();
 
-        client.send(request, HttpResponse.BodyHandlers.ofString());
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public void getEpicId(int id) throws IOException, InterruptedException {
+    public HttpResponse<String> getEpicId(int id) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(uriStandart + "/epics/" + id))
                 .build();
 
-        client.send(request, HttpResponse.BodyHandlers.ofString());
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public void getEpicsIdSubtasks(int id) throws IOException, InterruptedException {
+    public HttpResponse<String> getEpicsIdSubtasks(int id) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(uriStandart + "/epics/" + id + "/subtasks"))
                 .build();
 
-        client.send(request, HttpResponse.BodyHandlers.ofString());
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     public HttpResponse<String> addEpic(Epic epic) throws IOException, InterruptedException {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter());
-        gsonBuilder.registerTypeAdapter(Duration.class, new DurationTypeAdapter());
-        Gson gson = gsonBuilder.create();
+        Gson gson = getGson();
 
         String json = gson.toJson(epic);
 
@@ -161,36 +177,43 @@ public class TaskTrackerAPI {
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public void deleteEpicsId(int id) throws IOException, InterruptedException {
+    public HttpResponse<String> deleteEpicsId(int id) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(uriStandart + "/epics/" + id))
                 .header("Content-Type", "application/json")
                 .DELETE()
                 .build();
 
-        client.send(request, HttpResponse.BodyHandlers.ofString());
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     //ИСТОРИЯ
 
-    public void getHistory() throws IOException, InterruptedException {
+    public HttpResponse<String> getHistory() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(uriStandart + "/history"))
                 .build();
 
-        client.send(request, HttpResponse.BodyHandlers.ofString());
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     //Задачи по Приоритету
 
-    public void getPrioritized() throws IOException, InterruptedException {
+    public HttpResponse<String> getPrioritized() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(uriStandart + "/prioritized"))
                 .build();
 
-        client.send(request, HttpResponse.BodyHandlers.ofString());
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    public Gson getGson() {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter());
+        gsonBuilder.registerTypeAdapter(Duration.class, new DurationTypeAdapter());
+        return gsonBuilder.create();
     }
 
 }
